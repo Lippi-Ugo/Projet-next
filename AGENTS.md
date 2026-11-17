@@ -89,6 +89,18 @@ Les pages assemblent les composants et chargent les données. Les composants d�
 - Lors du branchement à l’API, utiliser `POST /drops/:id/like` ou `DELETE /drops/:id/like` via une Server Action ou un Route Handler qui lit le cookie. Le token reste côté serveur. Afficher l’attente, gérer l’échec et reprendre les valeurs `liked` et `likesCount` renvoyées par l’API.
 - Ne pas confondre un changement visuel local avec un like enregistré. Une mise à jour optimiste éventuelle doit pouvoir être annulée si la requête échoue.
 
+### Rappel du cours : Server, Client et Cache Components
+
+| Type | À retenir |
+| --- | --- |
+| Server Component | Peut être `async` pour lire l’API et utiliser des secrets côté serveur. Son code n’entre pas dans le bundle navigateur. Il contribue au HTML du premier affichage, éventuellement envoyé progressivement, ce qui facilite l’indexation. Pas de `useState`, de `useEffect` ni de gestionnaire `onClick` dans ce composant. |
+| Client Component (`"use client"`) | Permet `useState`, `useEffect`, `onClick` et l’accès aux API du navigateur au bon moment. Son code est envoyé au navigateur et hydraté au premier chargement. Placer la frontière client le plus bas possible dans l’arbre. |
+| Fonction ou composant avec `"use cache"` | Réutilise un résultat pour les mêmes paramètres tant que l’entrée reste valide. Pour des données publiques, ce résultat peut être partagé entre utilisateurs. `cacheLife` règle sa durée et `cacheTag` permet de l’identifier pour l’invalidation. Ne jamais appeler directement `cookies()` dans cette portée. |
+
+Le JavaScript des enfants clients et celui du framework peuvent toujours être envoyés : « zéro JavaScript » concerne le code propre du Server Component. Un Client Component peut aussi être prérendu sur le serveur ; `"use client"` n’autorise donc pas à utiliser `window` directement pendant le rendu initial.
+
+Après une écriture réussie dans une Server Action, `updateTag("nom-du-tag")` expire immédiatement l’entrée associée : la prochaine lecture attend des données fraîches. Il faut que la fonction mise en cache utilise le tag correspondant avec `cacheTag`. Ne pas appeler `updateTag` depuis un Client Component ou un Route Handler.
+
 ### Choisir entre serveur, client et cache
 
 Le choix serveur/client concerne les responsabilités du composant. Cache Components permet de réutiliser des données ou un rendu côté serveur : ce n’est pas un troisième environnement d’exécution.
@@ -115,7 +127,7 @@ Le projet active déjà `cacheComponents: true`, `partialPrefetching: true` et `
 - Après une mutation, actualiser l’affichage et invalider les données concernées si elles ont été mises en cache. Utiliser selon le besoin `revalidatePath`, `revalidateTag` ou `updateTag` ; ce dernier est réservé aux Server Actions. Un simple rafraîchissement du routeur n’invalide pas à lui seul le cache de données serveur.
 - Vérifier le résultat avec un build et en mode production : le comportement observé uniquement avec `next dev` ne suffit pas pour valider le cache.
 
-Documentation : [Server et Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components), [Cache Components et cache](https://nextjs.org/docs/app/getting-started/caching), [use cache](https://nextjs.org/docs/app/api-reference/directives/use-cache), [revalidation](https://nextjs.org/docs/app/getting-started/revalidating).
+Documentation : [Server et Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components), [Cache Components et cache](https://nextjs.org/docs/app/getting-started/caching), [use cache](https://nextjs.org/docs/app/api-reference/directives/use-cache), [revalidation](https://nextjs.org/docs/app/getting-started/revalidating), [updateTag](https://nextjs.org/docs/app/api-reference/functions/updateTag).
 
 ## 5. API et configuration
 
@@ -282,3 +294,13 @@ Le front Next.js sera déployé sur Vercel depuis le dépôt GitHub personnel. L
 - Les previews peuvent utiliser la même API partagée que la production. Tester les écritures uniquement sur des données dédiées.
 
 Documentation : [Next.js sur Vercel](https://vercel.com/docs/frameworks/full-stack/nextjs), [variables d’environnement](https://vercel.com/docs/environment-variables), [intégration Git](https://vercel.com/docs/git).
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
