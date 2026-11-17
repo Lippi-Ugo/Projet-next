@@ -275,7 +275,7 @@ Le front Next.js sera déployé sur Vercel depuis le dépôt GitHub personnel. L
 
 - Utiliser le preset Next.js et les réglages de build détectés par Vercel, sauf besoin identifié. Vérifier le répertoire racine si le projet est dans un sous-dossier. Conserver le rendu serveur et les Route Handlers nécessaires à la session ; ne pas activer `output: "export"`.
 - Aligner la version Node.js locale, celle déclarée par le projet et une version prise en charge par Vercel et Next.js.
-- Configurer `DROPS_API_URL=https://drops-api-production.up.railway.app` dans les variables Vercel pour Preview et Production. `.env.local` reste réservé au développement local et ne doit pas être commité.
+- Configurer `API_URL=https://drops-api-production.up.railway.app` dans les variables Vercel pour Preview et Production. `.env.local` reste réservé au développement local et ne doit pas être commité.
 - Redéployer après une modification des variables d’environnement. Documenter les variables nécessaires dans `.env.example` et le README.
 - Vérifier la branche de production et les déploiements automatiques configurés. Un push sur une branche connectée peut déclencher un déploiement : ne pas pousser ou déployer sans demande correspondante.
 - Après déploiement, vérifier les pages, les appels API, le cache et, quand elle sera implémentée, la session avec cookie sécurisé sur HTTPS.
