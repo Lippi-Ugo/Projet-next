@@ -68,7 +68,7 @@ async function HealthStatus() {
               La vérification n’a pas abouti. Vérifiez votre connexion ou réessayez
               plus tard.
             </p>
-            <p className="mt-2 break-words text-xs text-red-700/80 dark:text-red-300/80">
+            <p className="mt-2 break-words text-xs text-red-800 dark:text-red-200">
               Détail : {error.message}
             </p>
             <Link
