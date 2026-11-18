@@ -9,6 +9,7 @@ type DropListProps = {
   q?: string;
   category?: Drop["category"];
   page?: number;
+  token: string;
 };
 
 const categoryLabels: Record<Drop["category"], string> = {
@@ -28,12 +29,16 @@ export async function DropList({
   q = "",
   category,
   page = 1,
+  token,
 }: DropListProps) {
   const params = new URLSearchParams({ page: String(page), pageSize: "20" });
   if (q) params.set("q", q);
   if (category) params.set("category", category);
 
-  const data = await apiGet<DropPage>(`/drops?${params.toString()}`);
+  const data = await apiGet<DropPage>(
+    `/drops?${params.toString()}`,
+    token,
+  );
   const pageHref = (nextPage: number) => {
     const next = new URLSearchParams();
     if (q) next.set("q", q);
