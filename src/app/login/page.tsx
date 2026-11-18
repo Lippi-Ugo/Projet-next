@@ -1,4 +1,5 @@
 import { LoginForm } from "./login-form";
+import Link from "next/link";
 
 export const metadata = {
   title: "Connexion",
@@ -25,6 +26,15 @@ export default function LoginPage() {
         <div className="mt-7">
           <LoginForm />
         </div>
+        <p className="mt-6 text-center text-sm text-zinc-700 dark:text-zinc-300">
+          Pas encore de compte ?{" "}
+          <Link
+            href="/register"
+            className="font-semibold text-blue-800 underline decoration-blue-300 underline-offset-4 hover:text-blue-900 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800 dark:text-blue-300 dark:hover:text-blue-200"
+          >
+            Créer un compte
+          </Link>
+        </p>
       </section>
     </main>
   );

@@ -1,11 +1,60 @@
 import 'server-only'
 import { notFound, redirect } from 'next/navigation'
+import type { ApiErrorResponse } from '@/lib/api/types'
 
 export class ApiError extends Error {
-    constructor(readonly status: number, path: string) {
-        super(`API ${status} sur ${path}`)
+    readonly fields: ApiErrorResponse['error']['fields']
+
+    constructor(
+        readonly status: number,
+        path: string,
+        readonly apiMessage?: string,
+        fields: ApiErrorResponse['error']['fields'] = {},
+    ) {
+        super(`API ${status} sur ${path}${apiMessage ? ` : ${apiMessage}` : ''}`)
         this.name = 'ApiError'
+        this.fields = fields
     }
+}
+
+function isErrorFields(value: unknown): value is ApiErrorResponse['error']['fields'] {
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+        return false
+    }
+
+    return Object.values(value).every(
+        (messages) =>
+            Array.isArray(messages) &&
+            messages.every((message) => typeof message === 'string'),
+    )
+}
+
+function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
+    if (typeof value !== 'object' || value === null || !('error' in value)) {
+        return false
+    }
+
+    const error = value.error
+    return (
+        typeof error === 'object' &&
+        error !== null &&
+        'message' in error &&
+        typeof error.message === 'string' &&
+        'fields' in error &&
+        isErrorFields(error.fields)
+    )
+}
+
+async function throwApiError(response: Response, path: string): Promise<never> {
+    let payload: unknown
+    try {
+        payload = await response.clone().json()
+    } catch (error) {
+        if (!(error instanceof SyntaxError)) throw error
+    }
+
+    const details = isApiErrorResponse(payload) ? payload.error : undefined
+    throw new ApiError(response.status, path, details?.message, details?.fields)
 }
 
 export async function apiGet<T>(path: string, token?: string) {
@@ -15,7 +64,7 @@ export async function apiGet<T>(path: string, token?: string) {
     })
     if (res.status === 401) redirect('/login?expired=1')
     if (res.status === 404) notFound()
-    if (!res.ok) throw new ApiError(res.status, path)
+    if (!res.ok) await throwApiError(res, path)
     return (await res.json()) as T
 }
 
@@ -29,6 +78,6 @@ export async function apiPost<T>(path: string, body?: unknown, token?: string) {
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     })
     if (res.status === 404) notFound()
-    if (!res.ok) throw new ApiError(res.status, path)
+    if (!res.ok) await throwApiError(res, path)
     return res
 }
