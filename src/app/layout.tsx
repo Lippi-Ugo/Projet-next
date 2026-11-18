@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { AccountNavigation } from "./account-navigation";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -46,22 +47,23 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               Drops<span className="text-blue-700">.</span>
             </Link>
             <div className="flex items-center gap-1 sm:gap-2">
-              <Link
+              <a
                 href="/drops"
                 className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
               >
                 Explorer
-              </Link>
+              </a>
               <Link
                 href="/status"
                 className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
               >
                 Statut
               </Link>
+              <AccountNavigation />
             </div>
           </nav>
         </header>
-        <div id="contenu" className="flex flex-1 flex-col">
+        <div id="contenu" tabIndex={-1} className="flex flex-1 flex-col">
           {children}
         </div>
         <footer className="border-t border-zinc-200 dark:border-zinc-800">
