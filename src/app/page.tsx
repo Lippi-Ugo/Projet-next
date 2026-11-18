@@ -17,6 +17,8 @@ export default function Home() {
             communauté.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            {/* A full request checks the current session after login. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
               href="/drops"
               className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-800 px-6 text-sm font-bold text-white shadow-sm transition-colors hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800"

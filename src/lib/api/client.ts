@@ -10,6 +10,7 @@ export class ApiError extends Error {
         path: string,
         readonly apiMessage?: string,
         fields: ApiErrorResponse['error']['fields'] = {},
+        readonly retryAfter: string | null = null,
     ) {
         super(`API ${status} sur ${path}${apiMessage ? ` : ${apiMessage}` : ''}`)
         this.name = 'ApiError'
@@ -54,7 +55,7 @@ async function throwApiError(response: Response, path: string): Promise<never> {
     }
 
     const details = isApiErrorResponse(payload) ? payload.error : undefined
-    throw new ApiError(response.status, path, details?.message, details?.fields)
+    throw new ApiError(response.status, path, details?.message, details?.fields, response.headers.get('Retry-After'))
 }
 
 export async function apiGet<T>(path: string, token?: string) {
@@ -68,7 +69,7 @@ export async function apiGet<T>(path: string, token?: string) {
     return (await res.json()) as T
 }
 
-export async function apiPost<T>(path: string, body?: unknown, token?: string) {
+export async function apiPost(path: string, body?: unknown, token?: string) {
     const res = await fetch(`${process.env.API_URL}${path}`, {
         method: 'POST',
         headers: {
@@ -80,4 +81,12 @@ export async function apiPost<T>(path: string, body?: unknown, token?: string) {
     if (res.status === 404) notFound()
     if (!res.ok) await throwApiError(res, path)
     return res
+}
+
+export async function apiDelete(path: string, token: string) {
+    const res = await fetch(`${process.env.API_URL}${path}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!res.ok) await throwApiError(res, path)
 }

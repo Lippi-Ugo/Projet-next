@@ -47,6 +47,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               Drops<span className="text-blue-700">.</span>
             </Link>
             <div className="flex items-center gap-1 sm:gap-2">
+              {/* A full request checks the current session after login. */}
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a
                 href="/drops"
                 className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"

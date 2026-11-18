@@ -7,6 +7,7 @@ import type {AuthResponse, RegisterRequest} from '@/lib/api/types'
 
 export type LoginState = {
     error?: string
+    retryAt?: number
     invalidCredentials?: boolean
     fields?: Record<string, string[]>
     values?: { login: string }
@@ -14,11 +15,26 @@ export type LoginState = {
 
 export type RegisterState = {
     error?: string
+    retryAt?: number
     fields?: Record<string, string[]>
     values?: Pick<RegisterRequest, 'username' | 'email' | 'displayName'>
 }
 
+function rateLimitState(error: ApiError) {
+    const header = error.retryAfter?.trim()
+    const now = Date.now()
+    const retryAt = header && /^\d+$/.test(header)
+        ? now + Number(header) * 1000
+        : Date.parse(header ?? '')
+    if (!Number.isFinite(retryAt) || retryAt <= now) {
+        return { error: 'Trop de tentatives. Veuillez patienter avant de réessayer.' }
+    }
+    const seconds = Math.ceil((retryAt - now) / 1000)
+    return { error: `Trop de tentatives. Réessayez dans ${seconds} s.`, retryAt }
+}
+
 export async function login(_prev: LoginState, form: FormData): Promise<LoginState> {
+    if (_prev.retryAt && _prev.retryAt > Date.now()) return _prev
     const loginValue = form.get('login')
     const password = form.get('password')
     if (typeof loginValue !== 'string' || typeof password !== 'string') {
@@ -45,7 +61,7 @@ export async function login(_prev: LoginState, form: FormData): Promise<LoginSta
                 return { error: 'La connexion a été refusée.', values }
             }
             if (error.status === 429) {
-                return { error: 'Trop de tentatives. Veuillez patienter avant de réessayer.', values }
+                return { ...rateLimitState(error), values }
             }
             if (error.status === 409 || error.status === 422) {
                 return {
@@ -79,6 +95,7 @@ export async function login(_prev: LoginState, form: FormData): Promise<LoginSta
 }
 
 export async function register(_prev: RegisterState, form: FormData): Promise<RegisterState> {
+    if (_prev.retryAt && _prev.retryAt > Date.now()) return _prev
     const username = form.get('username')
     const email = form.get('email')
     const password = form.get('password')
@@ -119,7 +136,7 @@ export async function register(_prev: RegisterState, form: FormData): Promise<Re
                 return { error: 'La création du compte a été refusée.', values }
             }
             if (error.status === 429) {
-                return { error: 'Trop de tentatives. Veuillez patienter avant de réessayer.', values }
+                return { ...rateLimitState(error), values }
             }
             if (error.status >= 500) {
                 return { error: 'Le service d’inscription est indisponible. Réessayez plus tard.', values }
@@ -142,7 +159,7 @@ export async function register(_prev: RegisterState, form: FormData): Promise<Re
     await setSession(token, expiresAt)
     revalidatePath('/drops')
     revalidatePath('/', 'layout')
-    redirect('/')
+    redirect('/drops')
 }
 
 export async function logout() {

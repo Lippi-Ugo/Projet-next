@@ -143,7 +143,7 @@ Avant une intégration, vérifier le contrat déployé et les schémas OpenAPI. 
 Variable proposée pour les appels côté serveur, à documenter dans `.env.example` et à renseigner dans `.env.local` :
 
 ```dotenv
-DROPS_API_URL=https://drops-api-production.up.railway.app
+API_URL=https://drops-api-production.up.railway.app
 ```
 
 Cette variable appartient au front ; elle n’est pas imposée par l’API. Ne pas lui donner un préfixe `NEXT_PUBLIC_` si elle reste utilisée côté serveur. Ne jamais exposer un token, un `JWT_SECRET` ou une clé d’administration dans une variable publique. Aucune clé admin n’est nécessaire à l’application étudiante.
