@@ -77,28 +77,33 @@ export async function DropList({
           {data.items.map((drop) => (
             <li
               key={drop.id}
-              className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+              className="overflow-hidden rounded-2xl border border-zinc-200 border-t-4 border-t-blue-800 bg-white shadow-sm transition-shadow duration-200 hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:border-t-blue-500 dark:bg-zinc-900 dark:hover:border-zinc-700"
             >
-              <article className="p-5 sm:p-6">
-                <header className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-800 dark:bg-blue-950 dark:text-blue-200">
+              <article className="p-5 sm:p-7">
+                <header>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-900 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-100">
                       {categoryLabels[drop.category]}
                     </span>
-                    <h3 className="mt-3 break-words text-xl font-semibold tracking-tight text-zinc-950 dark:text-white">
-                      {drop.title}
-                    </h3>
+                    <time
+                      dateTime={drop.createdAt}
+                      className="text-xs font-medium text-zinc-600 dark:text-zinc-300"
+                    >
+                      {dateFormatter.format(new Date(drop.createdAt))}
+                    </time>
                   </div>
-                  <time
-                    dateTime={drop.createdAt}
-                    className="shrink-0 pt-1 text-xs text-zinc-500 dark:text-zinc-400"
-                  >
-                    {dateFormatter.format(new Date(drop.createdAt))}
-                  </time>
+                  <h3 className="mt-4 wrap-break-words text-xl font-bold leading-snug tracking-tight text-zinc-950 sm:text-2xl dark:text-white">
+                    <Link
+                      href={`/drops/${drop.id}`}
+                      className="rounded-sm hover:text-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800 dark:hover:text-blue-300"
+                    >
+                      {drop.title}
+                    </Link>
+                  </h3>
                 </header>
 
                 {drop.locked ? (
-                  <p className="mt-4 rounded-lg bg-zinc-50 px-4 py-3 text-sm text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                  <p className="mt-4 rounded-xl border border-zinc-200 bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
                     Ce drop est verrouillé.
                   </p>
                 ) : (
