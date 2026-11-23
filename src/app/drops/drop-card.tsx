@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Drop } from "@/lib/api/types";
-import LikeButton from "../like-button";
+import { LikeButton } from "@/components/LikeButton";
 import { DropExcerpt } from "./drop-excerpt";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
@@ -77,9 +77,9 @@ export function DropCard({ drop, categoryLabel }: { drop: Drop; categoryLabel: s
           </div>
           <div className="flex flex-wrap items-center gap-1 self-start rounded-xl border border-zinc-200 bg-zinc-50 p-1 text-xs font-medium text-zinc-800 sm:self-auto dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200">
             <LikeButton
-              key={`${drop.id}:${drop.likedByMe}:${drop.likesCount}`}
-              initialLiked={drop.likedByMe}
-              initialCount={drop.likesCount}
+              dropId={drop.id}
+              liked={drop.likedByMe}
+              likesCount={drop.likesCount}
             />
             <span className="inline-flex min-h-9 items-center px-2.5">
               {drop.commentsCount} commentaire

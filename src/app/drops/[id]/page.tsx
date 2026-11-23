@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { apiGet } from "@/lib/api/client";
 import type { Category, CommentPage, Drop } from "@/lib/api/types";
 import { requireSession } from "@/lib/session";
-import LikeButton from "../../like-button";
+import { LikeButton } from "@/components/LikeButton";
 import { deleteDrop } from "../actions";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
@@ -176,9 +176,10 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
               </span>
             </div>
             <LikeButton
-              key={`${drop.id}:${drop.likedByMe}:${drop.likesCount}`}
-              initialLiked={drop.likedByMe}
-              initialCount={drop.likesCount}
+              dropId={drop.id}
+              key={drop.id}
+              liked={drop.likedByMe}
+              likesCount={drop.likesCount}
             />
           </div>
         </div>
