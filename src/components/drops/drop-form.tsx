@@ -1,3 +1,4 @@
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import type { Category, Drop } from "@/lib/api/types";
 import {
   Select,
@@ -19,16 +20,16 @@ export function DropFields({ categories, drop }: { categories: Category[]; drop?
 
   return (
     <div className="space-y-4">
-      <div>
-        <label htmlFor="drop-title" className="block font-medium">Titre</label>
+      <Field className="gap-1.5">
+        <FieldLabel htmlFor="drop-title">Titre</FieldLabel>
         <input id="drop-title" name="title" required minLength={3} maxLength={80} defaultValue={drop?.title} className={inputClass} />
-      </div>
-      <div>
-        <label htmlFor="drop-content" className="block font-medium">Message</label>
+      </Field>
+      <Field className="gap-1.5">
+        <FieldLabel htmlFor="drop-content">Message</FieldLabel>
         <textarea id="drop-content" name="content" required maxLength={1000} rows={5} defaultValue={drop?.content ?? ""} className={inputClass} />
-      </div>
-      <div>
-        <label htmlFor="drop-category" className="block font-medium">Catégorie</label>
+      </Field>
+      <Field className="gap-1.5">
+        <FieldLabel htmlFor="drop-category">Catégorie</FieldLabel>
         {/* <select id="drop-category" name="category" required defaultValue={drop?.category ?? ""} className={inputClass}>
           <option value="">{categories.length ? "Choisir une catégorie" : "Aucune catégorie disponible"}</option>
           {categories.map(({ id, label }) => (
@@ -49,12 +50,12 @@ export function DropFields({ categories, drop }: { categories: Category[]; drop?
             </SelectGroup>
           </SelectContent>
         </Select>
-      </div>
-      <div>
-        <label htmlFor="drop-image" className="block font-medium">URL de l’image</label>
+      </Field>
+      <Field className="gap-1.5">
+        <FieldLabel htmlFor="drop-image">URL de l’image</FieldLabel>
         <input id="drop-image" name="imageUrl" type="url" maxLength={500} defaultValue={drop?.imageUrl ?? ""} placeholder="https://" aria-describedby="drop-image-description" className={inputClass} />
-        <p id="drop-image-description" className="text-sm text-zinc-600 dark:text-zinc-300">Obligatoire pour la catégorie Photo.</p>
-      </div>
+        <FieldDescription id="drop-image-description">Obligatoire pour la catégorie Photo.</FieldDescription>
+      </Field>
       <fieldset>
         <legend className="font-medium">Position du drop</legend>
         <LocationField
