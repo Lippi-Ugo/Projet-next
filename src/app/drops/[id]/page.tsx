@@ -3,21 +3,9 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { apiGet } from "@/lib/api/client";
-import type { CommentPage, Drop } from "@/lib/api/types";
+import type { Category, CommentPage, Drop } from "@/lib/api/types";
 import { requireSession } from "@/lib/session";
 import LikeButton from "../../like-button";
-
-type PageProps = {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<{ commentsPage?: string | string[] }>;
-};
-
-const categoryLabels: Record<Drop["category"], string> = {
-  note: "Un mot",
-  photo: "Une photo",
-  tip: "Une recommandation",
-  riddle: "Une énigme",
-};
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "long",
@@ -29,7 +17,7 @@ export const metadata = {
   title: "Détail d’un drop",
 };
 
-export default function DropPage({ params, searchParams }: PageProps) {
+export default function DropPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ commentsPage?: string | string[] }> }) {
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
       <Suspense
@@ -45,7 +33,7 @@ export default function DropPage({ params, searchParams }: PageProps) {
   );
 }
 
-async function DropContent({ params, searchParams }: PageProps) {
+async function DropContent({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ commentsPage?: string | string[] }> }) {
   const { id } = await params;
   if (!/^[1-9]\d*$/.test(id)) notFound();
 
@@ -64,14 +52,15 @@ async function DropContent({ params, searchParams }: PageProps) {
     page: String(commentsPage),
     pageSize: "20",
   });
-  const [drop, comments] = await Promise.all([
+  const [categories, drop, comments] = await Promise.all([
+    apiGet<Category[]>("/categories", token),
     apiGet<Drop>(`/drops/${id}`, token),
     apiGet<CommentPage>(
       `/drops/${id}/comments?${commentsParams.toString()}`,
       token,
     ),
   ]);
-  const categoryLabel = categoryLabels[drop.category];
+  const categoryLabel = categories.find(({ id }) => id === drop.category)?.label ?? drop.category;
 
   return (
     <>
@@ -180,9 +169,6 @@ async function DropContent({ params, searchParams }: PageProps) {
               <span className="rounded-lg bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
                 {drop.commentsCount} commentaire
                 {drop.commentsCount === 1 ? "" : "s"}
-              </span>
-              <span className="rounded-lg bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
-                {drop.opensCount} ouverture{drop.opensCount === 1 ? "" : "s"}
               </span>
               <span className="rounded-lg bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
                 Position {drop.location.precision === "exact" ? "exacte" : "approximative"}

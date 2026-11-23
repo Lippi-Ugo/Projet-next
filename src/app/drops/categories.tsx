@@ -1,26 +1,16 @@
 import Link from "next/link";
-import { apiGet } from "@/lib/api/client";
-import type { Category, Drop } from "@/lib/api/types";
+import type { Category } from "@/lib/api/types";
 
-const labels: Record<Drop["category"], string> = {
-  note: "Un mot",
-  photo: "Une photo",
-  tip: "Une recommandation",
-  riddle: "Une énigme",
-};
-
-export async function Categories({
+export function Categories({
+  categories,
   q = "",
   selected,
-  token,
 }: {
+  categories: Category[];
   q?: string;
-  selected?: Drop["category"];
-  token: string;
+  selected?: Category["id"];
 }) {
-  const list = await apiGet<Category[]>("/categories", token);
-
-  return list.map((category) => {
+  return categories.map((category) => {
     const params = new URLSearchParams({ cat: category.id });
     if (q) params.set("q", q);
     const isSelected = selected === category.id;
@@ -36,7 +26,7 @@ export async function Categories({
             : "border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
         }`}
       >
-        {labels[category.id]}
+        {category.label}
       </Link>
     );
   });

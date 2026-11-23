@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 
+const previewLength = 80;
+
 export function DropExcerpt({ content }: { content: string | null }) {
   const [open, setOpen] = useState(false);
   const text = content ?? "";
-  const isLong = text.length > 30;
+  const isLong = text.length > previewLength;
 
   return (
     <div className="mt-4 text-sm leading-6 text-zinc-700 dark:text-zinc-300">
@@ -13,7 +15,7 @@ export function DropExcerpt({ content }: { content: string | null }) {
         {text
           ? open || !isLong
             ? text
-            : `${text.slice(0, 30).trimEnd()}…`
+            : `${text.slice(0, previewLength).trimEnd()}…`
           : "Aucun contenu textuel pour ce drop."}
       </p>
       {isLong && (
