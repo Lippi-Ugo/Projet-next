@@ -96,7 +96,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
               </span>
             )}
           </div>
-          <h1 className="mt-4 break-words text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl dark:text-white">
+          <h1 className="mt-4 wrap-anywhere text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl dark:text-white">
             {drop.title}
           </h1>
           <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
@@ -136,7 +136,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
               Le contenu de ce drop est verrouillé.
             </p>
           ) : drop.content ? (
-            <p className="mt-6 whitespace-pre-wrap break-words text-base leading-7 text-zinc-800 dark:text-zinc-200">
+            <p className="mt-6 whitespace-pre-wrap wrap-anywhere text-base leading-7 text-zinc-800 dark:text-zinc-200">
               {drop.content}
             </p>
           ) : (
@@ -153,7 +153,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
               height={800}
               unoptimized
               sizes="(max-width: 640px) 100vw, 768px"
-              className="mt-6 max-h-[36rem] w-full rounded-2xl bg-zinc-100 object-contain dark:bg-zinc-800"
+              className="mt-6 max-h-144 w-full rounded-2xl bg-zinc-100 object-contain dark:bg-zinc-800"
             />
           )}
 
@@ -228,7 +228,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
                       {dateFormatter.format(new Date(comment.createdAt))}
                     </time>
                   </header>
-                  <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-zinc-800 dark:text-zinc-200">
+                  <p className="mt-3 whitespace-pre-wrap wrap-anywhere text-sm leading-6 text-zinc-800 dark:text-zinc-200">
                     {comment.content}
                   </p>
                 </article>
