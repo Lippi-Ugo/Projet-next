@@ -73,7 +73,7 @@ async function DropsContent({ searchParams }: { searchParams: Promise<Search> })
         aria-label="Rechercher et filtrer les drops"
         className="mb-8 space-y-6 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6 dark:border-zinc-800 dark:bg-zinc-900"
       >
-        <SearchBox key={q} />
+        <SearchBox />
         <div>
           <h2 className="mb-3 text-sm font-bold text-zinc-900 dark:text-zinc-100">
             Catégories
