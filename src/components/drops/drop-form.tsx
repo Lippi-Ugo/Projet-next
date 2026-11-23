@@ -1,4 +1,5 @@
 import type { Category, Drop } from "@/lib/api/types";
+import { LocationField } from "./location-field";
 
 const inputClass = "w-full rounded-lg border border-zinc-400 bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-blue-700 dark:border-zinc-600 dark:bg-zinc-950";
 
@@ -29,16 +30,11 @@ export function DropFields({ categories, drop }: { categories: Category[]; drop?
       </div>
       <fieldset>
         <legend className="font-medium">Position du drop</legend>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div>
-            <label htmlFor="drop-lat">Latitude</label>
-            <input id="drop-lat" name="lat" type="number" step="any" required min={-90} max={90} defaultValue={drop?.location.lat} className={inputClass} />
-          </div>
-          <div>
-            <label htmlFor="drop-lng">Longitude</label>
-            <input id="drop-lng" name="lng" type="number" step="any" required min={-180} max={180} defaultValue={drop?.location.lng} className={inputClass} />
-          </div>
-        </div>
+        <LocationField
+          initialLat={drop?.location.lat}
+          initialLng={drop?.location.lng}
+          showTestPosition={!drop}
+        />
       </fieldset>
     </div>
   );
