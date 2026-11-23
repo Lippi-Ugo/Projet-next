@@ -85,9 +85,6 @@ export function DropCard({ drop, categoryLabel }: { drop: Drop; categoryLabel: s
               {drop.commentsCount} commentaire
               {drop.commentsCount === 1 ? "" : "s"}
             </span>
-            <span className="inline-flex min-h-9 items-center px-2.5">
-              {drop.opensCount} ouverture{drop.opensCount === 1 ? "" : "s"}
-            </span>
           </div>
         </footer>
       </article>
