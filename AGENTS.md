@@ -46,10 +46,10 @@ Le dossier `src/app/` contient actuellement `page.tsx`, `layout.tsx`, `globals.c
 | `src/app/globals.css` | Styles globaux et configuration des styles du starter |
 | `src/app/drops/page.tsx` | Liste, recherche, filtres et pagination |
 | `src/app/drops/[id]/page.tsx` | Détail d’un drop |
-| `src/app/drops/nouveau/page.tsx` | Création d’un drop |
+| `src/app/drops/new/page.tsx` | Création d’un drop |
 | `src/app/connexion/page.tsx` | Connexion |
 | `src/app/inscription/page.tsx` | Inscription |
-| `src/app/profil/[username]/page.tsx` | Profil public |
+| `src/app/u/[username]/page.tsx` | Profil utilisateur, prévu pour une étape ultérieure |
 | `src/app/statut/page.tsx` | État de santé de l’API |
 | `src/app/api/` | Route Handlers nécessaires à la session et aux appels depuis le navigateur |
 | `src/components/ui/` | Boutons, champs et éléments réutilisés |
@@ -121,7 +121,7 @@ Une page peut donc rester côté serveur et contenir un bouton de like côté cl
 Le projet active déjà `cacheComponents: true`, `partialPrefetching: true` et `reactCompiler: true` dans `next.config.ts`. Conserver ces réglages.
 
 - Avec Cache Components activé, placer `"use cache"` dans une fonction ou un composant serveur asynchrone dont on veut réutiliser le résultat. Choisir une durée avec `cacheLife` et, si une invalidation est nécessaire, un tag avec `cacheTag`.
-- Commencer par les catégories publiques, appelées sans token. Garder les listes et détails personnalisés hors du cache partagé, notamment les champs `likedByMe`, `openedByMe` et `isMine`.
+- La démo du J2 met en cache les catégories publiques. L’API déployée répond actuellement 401 sans token sur `/categories`. Charger les catégories avec la session côté serveur, hors du cache partagé. Garder aussi les listes et détails personnalisés hors du cache partagé, notamment les champs `likedByMe`, `openedByMe` et `isMine`.
 - Ne pas lire directement `cookies()`, `headers()` ou les `searchParams` de la requête dans une portée `"use cache"`, y compris via une fonction appelée. Lire ces valeurs en dehors ; transmettre seulement les arguments publics utiles, par exemple une catégorie ou un numéro de page déjà validés.
 - Isoler les lectures de session et les requêtes non mises en cache dans des composants sous `<Suspense>` avec un fallback. Une frontière doit entourer la partie qui attend les données ; elle ne doit pas être ajoutée après la lecture bloquante.
 - Après une mutation, actualiser l’affichage et invalider les données concernées si elles ont été mises en cache. Utiliser selon le besoin `revalidatePath`, `revalidateTag` ou `updateTag` ; ce dernier est réservé aux Server Actions. Un simple rafraîchissement du routeur n’invalide pas à lui seul le cache de données serveur.
@@ -259,13 +259,13 @@ Vérifier `response.ok` : `fetch` ne rejette pas automatiquement les statuts 4xx
 - 429 : respecter `Retry-After` ; éviter les relances immédiates en boucle.
 - 500, 503 ou erreur réseau : afficher une erreur compréhensible et une action de nouvelle tentative adaptée. Ne pas répéter automatiquement une écriture dont le résultat est incertain.
 
-## 8. Interface et géolocalisation future
+## 8. Interface et géolocalisation
 
 Textes visibles et explications en français ; identifiants de code en anglais. Produire un code simple et compréhensible pour un étudiant. Commenter les choix utiles, sans commenter chaque ligne.
 
 Prévoir les états chargement, succès, vide et erreur. Pendant une soumission, afficher l’attente et empêcher les doubles envois. Utiliser du HTML sémantique, des labels explicites, une navigation au clavier, un focus visible et des messages d’erreur accessibles. Adapter l’interface au mobile et au bureau.
 
-Lors de l’étape cartographie, demander la géolocalisation à la suite d’une action explicite, gérer refus et indisponibilité, et utiliser un contexte sécurisé compatible avec le navigateur. Ne pas diffuser ni enregistrer de suivi de position utilisateur par défaut. Le contrat prévoit des positions de drops ; il ne prévoit pas de diffuser la position des étudiants sur le WebSocket.
+Depuis le J3, le bouton « Utiliser ma position » remplit les coordonnées du drop à la suite d’une action explicite. Gérer le refus et l’indisponibilité, garder une saisie manuelle et utiliser un contexte sécurisé compatible avec le navigateur. Ne pas diffuser ni enregistrer de suivi de position utilisateur par défaut. Le contrat prévoit des positions de drops ; il ne prévoit pas de diffuser la position des étudiants sur le WebSocket.
 
 ## 9. Vérification et méthode de travail
 
