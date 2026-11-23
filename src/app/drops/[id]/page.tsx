@@ -6,8 +6,11 @@ import { apiGet } from "@/lib/api/client";
 import type { Category, CommentPage, Drop } from "@/lib/api/types";
 import { requireSession } from "@/lib/session";
 import { LikeButton } from "@/components/LikeButton";
+import { DropAuthorAvatar } from "@/components/drops/drop-author-avatar";
+import { Badge } from "@/components/ui/badge";
 import { CommentFields } from "./comment-form";
-import { addComment, deleteDrop } from "../actions";
+import { DeleteDropDialog } from "@/components/drops/delete-drop-dialog";
+import { addComment } from "../actions";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "long",
@@ -78,13 +81,13 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
       <article className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         <div className="border-b border-zinc-200 bg-zinc-50 px-5 py-6 sm:px-8 dark:border-zinc-800 dark:bg-zinc-950">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-900 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-100">
+            <Badge variant="outline" className="h-auto border-blue-200 bg-blue-50 px-3 py-1 text-blue-900 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-100">
               {categoryLabel}
-            </span>
+            </Badge>
             {drop.isMine && (
-              <span className="rounded-full bg-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200">
+              <Badge variant="secondary" className="h-auto px-3 py-1">
                 Votre drop
-              </span>
+              </Badge>
             )}
             {drop.hidden && (
               <span className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-950 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100">
@@ -113,23 +116,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
 
         <div className="p-5 sm:p-8">
           <div className="flex items-center gap-3">
-            {drop.author.avatarUrl ? (
-              <Image
-                src={drop.author.avatarUrl}
-                alt=""
-                width={48}
-                height={48}
-                unoptimized
-                className="size-12 rounded-full bg-zinc-100 object-cover dark:bg-zinc-800"
-              />
-            ) : (
-              <span
-                aria-hidden="true"
-                className="flex size-12 shrink-0 items-center justify-center rounded-full bg-blue-100 text-base font-bold text-blue-900 dark:bg-blue-950 dark:text-blue-100"
-              >
-                {drop.author.displayName.slice(0, 1).toLocaleUpperCase("fr-FR")}
-              </span>
-            )}
+            <DropAuthorAvatar author={drop.author} />
             <p className="min-w-0 text-sm">
               <span className="block truncate font-semibold text-zinc-950 dark:text-zinc-100">
                 {drop.author.displayName}
@@ -187,15 +174,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
         {drop.isMine && (
           <div className="flex flex-wrap items-center gap-4 border-t border-zinc-200 px-5 py-4 sm:px-8 dark:border-zinc-800">
             <Link href={`/drops/${drop.id}/edit`} prefetch={false} className="text-sm font-semibold text-blue-700 underline dark:text-blue-300">Modifier le drop</Link>
-            <details className="text-sm">
-              <summary className="cursor-pointer font-semibold text-red-700 underline dark:text-red-300">Supprimer le drop</summary>
-              <form action={deleteDrop.bind(null, drop.id)} className="mt-2 space-y-2">
-                <p>La suppression est définitive.</p>
-                <button type="submit" className="rounded-lg bg-red-700 px-3 py-2 font-semibold text-white hover:bg-red-800">
-                  Confirmer la suppression
-                </button>
-              </form>
-            </details>
+            <DeleteDropDialog dropId={drop.id} />
           </div>
         )}
       </article>
