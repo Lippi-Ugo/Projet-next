@@ -17,6 +17,17 @@ export async function toggleLike(dropId: number, liked: boolean) {
     refresh()
 }
 
+export async function addComment(dropId: number, form: FormData) {
+    const token = await requireSession()
+    if (!Number.isSafeInteger(dropId) || dropId < 1) notFound()
+
+    const content = String(form.get('content') ?? '').trim()
+    if (!content) return
+
+    await apiPost(`/drops/${dropId}/comments`, { content }, token)
+    refresh()
+}
+
 export async function updateDrop(drop: Drop, form: FormData) {
     const token = await requireSession()
     if (!Number.isSafeInteger(drop.id) || drop.id < 1) notFound()
