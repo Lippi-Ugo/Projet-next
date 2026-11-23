@@ -4,6 +4,7 @@ import { apiGet } from "@/lib/api/client";
 import type { Category } from "@/lib/api/types";
 import { Categories } from "./categories";
 import { DropList } from "./drop-list";
+import { DropListSkeleton } from "@/components/drops/drop-list-skeleton";
 import { SearchBox } from "./search-box";
 import { requireSession } from "@/lib/session";
 
@@ -103,11 +104,7 @@ async function DropsContent({ searchParams }: { searchParams: Promise<Search> })
 
       <Suspense
         key={`${q}:${category ?? ""}:${page}`}
-        fallback={
-          <p role="status" className="rounded-xl border border-zinc-200 bg-white px-5 py-6 text-sm font-medium text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-            Chargement des drops…
-          </p>
-        }
+        fallback={<DropListSkeleton />}
       >
         <DropList q={q} category={category} categories={categories} page={page} token={token} />
       </Suspense>
