@@ -1,28 +1,22 @@
 import Link from "next/link";
 import { apiGet } from "@/lib/api/client";
-import type { Drop, DropPage } from "@/lib/api/types";
+import type { Category, DropPage } from "@/lib/api/types";
 import { DropCard } from "./drop-card";
-
-type DropListProps = {
-  q?: string;
-  category?: Drop["category"];
-  page?: number;
-  token: string;
-};
-
-const categoryLabels: Record<Drop["category"], string> = {
-  note: "Un mot",
-  photo: "Une photo",
-  tip: "Une recommandation",
-  riddle: "Une énigme",
-};
 
 export async function DropList({
   q = "",
   category,
+  categories,
   page = 1,
   token,
-}: DropListProps) {
+}: {
+  q?: string;
+  category?: Category["id"];
+  categories: Category[];
+  page?: number;
+  token: string;
+}) {
+  const categoryLabels = new Map(categories.map(({ id, label }) => [id, label]));
   const params = new URLSearchParams({ page: String(page), pageSize: "20" });
   if (q) params.set("q", q);
   if (category) params.set("category", category);
@@ -53,7 +47,7 @@ export async function DropList({
         {(q || category) && (
           <p className="rounded-full bg-zinc-100 px-3 py-1 text-sm font-medium text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200">
             Filtres actifs
-            {category ? ` · ${categoryLabels[category]}` : ""}
+            {category ? ` · ${categoryLabels.get(category) ?? category}` : ""}
             {q ? ` · « ${q} »` : ""}
           </p>
         )}
@@ -71,7 +65,7 @@ export async function DropList({
       ) : (
         <ul className="mt-5 space-y-4">
           {data.items.map((drop) => (
-            <DropCard key={drop.id} drop={drop} categoryLabel={categoryLabels[drop.category]} />
+            <DropCard key={drop.id} drop={drop} categoryLabel={categoryLabels.get(drop.category) ?? drop.category} />
           ))}
         </ul>
       )}

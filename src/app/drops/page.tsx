@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import type { Drop } from "@/lib/api/types";
+import { apiGet } from "@/lib/api/client";
+import type { Category } from "@/lib/api/types";
 import { Categories } from "./categories";
 import { DropList } from "./drop-list";
 import { SearchBox } from "./search-box";
@@ -12,8 +13,6 @@ type Search = {
   page?: string | string[];
 };
 
-type PageProps = { searchParams: Promise<Search> };
-
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
@@ -22,7 +21,7 @@ export const metadata = {
   description: "Parcourez les messages et recommandations partagés autour de vous.",
 };
 
-export default function DropsPage({ searchParams }: PageProps) {
+export default function DropsPage({ searchParams }: { searchParams: Promise<Search> }) {
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
       <Suspense
@@ -41,12 +40,12 @@ export default function DropsPage({ searchParams }: PageProps) {
   );
 }
 
-async function DropsContent({ searchParams }: PageProps) {
+async function DropsContent({ searchParams }: { searchParams: Promise<Search> }) {
   const token = await requireSession();
   const params = await searchParams;
   const q = first(params.q)?.trim() ?? "";
-  const categories: Drop["category"][] = ["note", "photo", "tip", "riddle"];
-  const category = categories.find((id) => id === first(params.cat));
+  const categories = await apiGet<Category[]>("/categories", token);
+  const category = categories.find(({ id }) => id === first(params.cat))?.id;
   const requestedPage = Number(first(params.page) ?? "1");
   const page =
     Number.isSafeInteger(requestedPage) && requestedPage > 0
@@ -94,18 +93,7 @@ async function DropsContent({ searchParams }: PageProps) {
             >
               Toutes
             </Link>
-            <Suspense
-              fallback={
-                <span
-                  role="status"
-                  className="px-2 py-1.5 text-sm text-zinc-600 dark:text-zinc-300"
-                >
-                  Chargement des catégories…
-                </span>
-              }
-            >
-              <Categories q={q} selected={category} token={token} />
-            </Suspense>
+            <Categories categories={categories} q={q} selected={category} />
           </nav>
         </div>
       </section>
@@ -118,7 +106,7 @@ async function DropsContent({ searchParams }: PageProps) {
           </p>
         }
       >
-        <DropList q={q} category={category} page={page} token={token} />
+        <DropList q={q} category={category} categories={categories} page={page} token={token} />
       </Suspense>
     </>
   );
