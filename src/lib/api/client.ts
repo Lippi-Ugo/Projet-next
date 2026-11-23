@@ -1,5 +1,6 @@
 import 'server-only'
 import { notFound, redirect } from 'next/navigation'
+import { expireSession } from '@/lib/session'
 import type { ApiErrorResponse } from '@/lib/api/types'
 
 export class ApiError extends Error {
@@ -58,12 +59,21 @@ async function throwApiError(response: Response, path: string): Promise<never> {
     throw new ApiError(response.status, path, details?.message, details?.fields, response.headers.get('Retry-After'))
 }
 
-export async function apiGet<T>(path: string, token?: string) {
-    const res = await fetch(`${process.env.API_URL}${path}`, {
+function getResponse(path: string, token?: string) {
+    return fetch(`${process.env.API_URL}${path}`, {
         cache: 'no-store',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
-    if (res.status === 401) redirect('/login?expired=1')
+}
+
+export async function isSessionRejected(token: string) {
+    const response = await getResponse('/auth/me', token)
+    return response.status === 401
+}
+
+export async function apiGet<T>(path: string, token?: string) {
+    const res = await getResponse(path, token)
+    if (res.status === 401) redirect(token ? '/login/session-expired' : '/login')
     if (res.status === 404) notFound()
     if (!res.ok) await throwApiError(res, path)
     return (await res.json()) as T
@@ -78,6 +88,7 @@ export async function apiPost(path: string, body?: unknown, token?: string) {
         },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     })
+    if (res.status === 401 && token && path !== '/auth/logout') await expireSession()
     if (res.status === 404) notFound()
     if (!res.ok) await throwApiError(res, path)
     return res
@@ -88,5 +99,7 @@ export async function apiDelete(path: string, token: string) {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
     })
+    if (res.status === 401) await expireSession()
+    if (res.status === 404) notFound()
     if (!res.ok) await throwApiError(res, path)
 }

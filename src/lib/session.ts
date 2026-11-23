@@ -25,8 +25,17 @@ export async function clearSession() {
     (await cookies()).delete('session')
 }
 
+export async function expireSession() {
+    await clearSession()
+    redirect('/login?expired=1')
+}
+
 export async function requireSession() {
     const token = (await cookies()).get('session')?.value
     if (!token) redirect('/login')
     return token
+}
+
+export async function getToken() {
+    return (await cookies()).get('session')?.value
 }
