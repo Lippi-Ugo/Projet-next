@@ -1,7 +1,7 @@
 'use server'
 import {revalidatePath} from 'next/cache'
 import {redirect} from 'next/navigation'
-import {ApiError, apiPost} from '@/lib/api/client'
+import {ApiError, apiPost, rateLimitState} from '@/lib/api/client'
 import {clearSession, getSession, setSession} from '@/lib/session'
 import type {AuthResponse, RegisterRequest} from '@/lib/api/types'
 
@@ -18,19 +18,6 @@ export type RegisterState = {
     retryAt?: number
     fields?: Record<string, string[]>
     values?: Pick<RegisterRequest, 'username' | 'email' | 'displayName'>
-}
-
-function rateLimitState(error: ApiError) {
-    const header = error.retryAfter?.trim()
-    const now = Date.now()
-    const retryAt = header && /^\d+$/.test(header)
-        ? now + Number(header) * 1000
-        : Date.parse(header ?? '')
-    if (!Number.isFinite(retryAt) || retryAt <= now) {
-        return { error: 'Trop de tentatives. Veuillez patienter avant de réessayer.' }
-    }
-    const seconds = Math.ceil((retryAt - now) / 1000)
-    return { error: `Trop de tentatives. Réessayez dans ${seconds} s.`, retryAt }
 }
 
 export async function login(_prev: LoginState, form: FormData): Promise<LoginState> {
@@ -175,5 +162,5 @@ export async function logout() {
     }
 
     await clearSession()
-    redirect('/')
+    redirect('/login')
 }

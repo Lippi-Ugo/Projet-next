@@ -1,12 +1,20 @@
 import { LoginForm } from "./login-form";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "Connexion",
   description: "Connectez-vous à votre compte Drops.",
 };
 
-export default function LoginPage() {
+type Props = { searchParams: Promise<{ expired?: string }> };
+
+async function SessionNotice({ searchParams }: Props) {
+  const { expired } = await searchParams;
+  return expired === "1" ? <p role="status" className="mt-4 text-sm">Votre session a expiré. Reconnectez-vous pour continuer.</p> : null;
+}
+
+export default function LoginPage({ searchParams }: Props) {
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <section className="w-full max-w-md rounded-3xl border border-zinc-200 bg-white p-6 shadow-xl shadow-zinc-200/50 sm:p-8 dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-black/20">
@@ -24,6 +32,7 @@ export default function LoginPage() {
           connecter.
         </p>
         <div className="mt-7">
+          <Suspense fallback={null}><SessionNotice searchParams={searchParams} /></Suspense>
           <LoginForm />
         </div>
         <p className="mt-6 text-center text-sm text-zinc-700 dark:text-zinc-300">
