@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useFormStatus } from "react-dom";
+import { Button } from "@/components/ui/button";
 
 export function SubmitButton({ pending }: { pending?: boolean }) {
   const status = useFormStatus();
@@ -8,8 +9,8 @@ export function SubmitButton({ pending }: { pending?: boolean }) {
   const isPending = pending ?? status.pending;
 
   return (
-    <button type="submit" disabled={isPending} className="min-h-11 bg-blue-700 px-4 text-white hover:bg-blue-800">
+    <Button type="submit" size="lg" disabled={isPending} className="min-h-11 bg-blue-700 px-4 text-white hover:bg-blue-800">
       {isPending ? "Enregistrement…" : "Enregistrer"}
-    </button>
+    </Button>
   );
 }
