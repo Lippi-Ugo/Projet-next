@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { RegisterForm } from "./register-form";
+import { RegisterForm } from "./RegisterForm";
 
 export const metadata = {
   title: "Inscription",
