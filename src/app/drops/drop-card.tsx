@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Drop } from "@/lib/api/types";
+import { Badge } from "@/components/ui/badge";
 import { LikeButton } from "@/components/LikeButton";
+import { DropAuthorAvatar } from "@/components/drops/drop-author-avatar";
 import { DropExcerpt } from "./drop-excerpt";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
@@ -18,9 +20,9 @@ export function DropCard({ drop, categoryLabel }: { drop: Drop; categoryLabel: s
       <article className="p-5 sm:p-7">
         <header>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-900 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-100">
+            <Badge variant="outline" className="h-auto border-blue-200 bg-blue-50 px-3 py-1 text-blue-900 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-100">
               {categoryLabel}
-            </span>
+            </Badge>
             <time
               dateTime={drop.createdAt}
               className="text-xs font-medium text-zinc-600 dark:text-zinc-300"
@@ -60,12 +62,7 @@ export function DropCard({ drop, categoryLabel }: { drop: Drop; categoryLabel: s
 
         <footer className="mt-6 flex flex-col gap-4 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800">
           <div className="flex min-w-0 items-center gap-3">
-            <span
-              aria-hidden="true"
-              className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-sm font-bold text-blue-900 dark:bg-blue-950 dark:text-blue-100"
-            >
-              {drop.author.displayName.slice(0, 1).toLocaleUpperCase("fr-FR")}
-            </span>
+            <DropAuthorAvatar author={drop.author} />
             <p className="min-w-0 truncate text-sm">
               <span className="block truncate font-semibold text-zinc-900 dark:text-zinc-100">
                 {drop.author.displayName}
