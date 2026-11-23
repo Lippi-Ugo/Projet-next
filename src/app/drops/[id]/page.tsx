@@ -6,6 +6,7 @@ import { apiGet } from "@/lib/api/client";
 import type { Category, CommentPage, Drop } from "@/lib/api/types";
 import { requireSession } from "@/lib/session";
 import { LikeButton } from "@/components/LikeButton";
+import { PresenceWidget } from "@/components/PresenceWidget";
 import { DropAuthorAvatar } from "@/components/drops/drop-author-avatar";
 import { Badge } from "@/components/ui/badge";
 import { CommentFields } from "./comment-form";
@@ -162,6 +163,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
               <span className="rounded-lg bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
                 Position {drop.location.precision === "exact" ? "exacte" : "approximative"}
               </span>
+              <PresenceWidget dropId={drop.id} />
             </div>
             <LikeButton
               dropId={drop.id}
