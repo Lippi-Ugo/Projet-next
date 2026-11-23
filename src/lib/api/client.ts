@@ -19,6 +19,21 @@ export class ApiError extends Error {
     }
 }
 
+export type RateLimitState = { retryAt?: number }
+
+export function rateLimitState(error: ApiError): RateLimitState & { error: string } {
+    const header = error.retryAfter?.trim()
+    const now = Date.now()
+    const retryAt = header && /^\d+$/.test(header)
+        ? now + Number(header) * 1000
+        : Date.parse(header ?? '')
+    if (!Number.isFinite(retryAt) || retryAt <= now) {
+        return { error: 'Trop de requêtes. Veuillez patienter avant de réessayer.' }
+    }
+    const seconds = Math.ceil((retryAt - now) / 1000)
+    return { error: `Trop de requêtes. Réessayez dans ${seconds} s.`, retryAt }
+}
+
 function isErrorFields(value: unknown): value is ApiErrorResponse['error']['fields'] {
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
         return false
