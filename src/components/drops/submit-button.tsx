@@ -2,8 +2,10 @@
 
 import { useFormStatus } from "react-dom";
 
-export function SubmitButton() {
-  const { pending: isPending } = useFormStatus();
+export function SubmitButton({ pending }: { pending?: boolean }) {
+  const status = useFormStatus();
+  // L'édition suit son propre envoi avec useActionState.
+  const isPending = pending ?? status.pending;
 
   return (
     <button type="submit" disabled={isPending} className="min-h-11 bg-blue-700 px-4 text-white hover:bg-blue-800">

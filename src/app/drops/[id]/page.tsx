@@ -181,6 +181,11 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
             />
           </div>
         </div>
+        {drop.isMine && (
+          <div className="flex flex-wrap items-center gap-4 border-t border-zinc-200 px-5 py-4 sm:px-8 dark:border-zinc-800">
+            <Link href={`/drops/${drop.id}/edit`} prefetch={false} className="text-sm font-semibold text-blue-700 underline dark:text-blue-300">Modifier le drop</Link>
+          </div>
+        )}
       </article>
 
       <section

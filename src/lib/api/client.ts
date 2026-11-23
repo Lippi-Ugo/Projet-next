@@ -109,6 +109,18 @@ export async function apiPost(path: string, body?: unknown, token?: string) {
     return res
 }
 
+export async function apiPatch(path: string, body: unknown, token: string) {
+    const res = await fetch(`${process.env.API_URL}${path}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(body),
+    })
+    if (res.status === 401) await expireSession()
+    if (res.status === 404) notFound()
+    if (!res.ok) await throwApiError(res, path)
+    return res
+}
+
 export async function apiDelete(path: string, token: string) {
     const res = await fetch(`${process.env.API_URL}${path}`, {
         method: 'DELETE',
