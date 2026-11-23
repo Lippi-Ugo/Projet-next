@@ -6,6 +6,7 @@ import { apiGet } from "@/lib/api/client";
 import type { Category, CommentPage, Drop } from "@/lib/api/types";
 import { requireSession } from "@/lib/session";
 import LikeButton from "../../like-button";
+import { deleteDrop } from "../actions";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "long",
@@ -184,6 +185,15 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
         {drop.isMine && (
           <div className="flex flex-wrap items-center gap-4 border-t border-zinc-200 px-5 py-4 sm:px-8 dark:border-zinc-800">
             <Link href={`/drops/${drop.id}/edit`} prefetch={false} className="text-sm font-semibold text-blue-700 underline dark:text-blue-300">Modifier le drop</Link>
+            <details className="text-sm">
+              <summary className="cursor-pointer font-semibold text-red-700 underline dark:text-red-300">Supprimer le drop</summary>
+              <form action={deleteDrop.bind(null, drop.id)} className="mt-2 space-y-2">
+                <p>La suppression est définitive.</p>
+                <button type="submit" className="rounded-lg bg-red-700 px-3 py-2 font-semibold text-white hover:bg-red-800">
+                  Confirmer la suppression
+                </button>
+              </form>
+            </details>
           </div>
         )}
       </article>
