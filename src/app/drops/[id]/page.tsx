@@ -5,8 +5,9 @@ import { notFound } from "next/navigation";
 import { apiGet } from "@/lib/api/client";
 import type { Category, CommentPage, Drop } from "@/lib/api/types";
 import { requireSession } from "@/lib/session";
-import LikeButton from "../../like-button";
-import { deleteDrop } from "../actions";
+import { LikeButton } from "@/components/LikeButton";
+import { CommentFields } from "./comment-form";
+import { addComment, deleteDrop } from "../actions";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "long",
@@ -176,9 +177,10 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
               </span>
             </div>
             <LikeButton
-              key={`${drop.id}:${drop.likedByMe}:${drop.likesCount}`}
-              initialLiked={drop.likedByMe}
-              initialCount={drop.likesCount}
+              dropId={drop.id}
+              key={drop.id}
+              liked={drop.likedByMe}
+              likesCount={drop.likesCount}
             />
           </div>
         </div>
@@ -210,6 +212,10 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
             {comments.total} commentaire{comments.total === 1 ? "" : "s"}
           </p>
         </div>
+
+        <form action={addComment.bind(null, drop.id)} className="space-y-3 border-b border-zinc-200 py-5 dark:border-zinc-800">
+          <CommentFields />
+        </form>
 
         {comments.items.length === 0 ? (
           <p className="py-8 text-sm text-zinc-600 dark:text-zinc-400">

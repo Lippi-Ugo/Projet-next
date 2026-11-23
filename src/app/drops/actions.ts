@@ -1,11 +1,32 @@
 ﻿'use server'
 
-import { revalidatePath } from 'next/cache'
+import { refresh, revalidatePath } from 'next/cache'
 import { notFound, redirect, RedirectType } from 'next/navigation'
-import { ApiError, apiDelete, apiPatch } from '@/lib/api/client'
+import { ApiError, apiDelete, apiPatch, apiPost } from '@/lib/api/client'
 import type { Drop } from '@/lib/api/types'
 import { requireSession } from '@/lib/session'
 import { readDropForm } from './drop-form-data'
+
+export async function toggleLike(dropId: number, liked: boolean) {
+    const token = await requireSession()
+    if (!Number.isSafeInteger(dropId) || dropId < 1) notFound()
+
+    const path = `/drops/${dropId}/like`
+    if (liked) await apiDelete(path, token)
+    else await apiPost(path, undefined, token)
+    refresh()
+}
+
+export async function addComment(dropId: number, form: FormData) {
+    const token = await requireSession()
+    if (!Number.isSafeInteger(dropId) || dropId < 1) notFound()
+
+    const content = String(form.get('content') ?? '').trim()
+    if (!content) return
+
+    await apiPost(`/drops/${dropId}/comments`, { content }, token)
+    refresh()
+}
 
 export async function updateDrop(drop: Drop, form: FormData) {
     const token = await requireSession()
