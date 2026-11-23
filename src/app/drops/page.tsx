@@ -67,6 +67,9 @@ async function DropsContent({ searchParams }: { searchParams: Promise<Search> })
         <p className="mt-3 max-w-2xl leading-7 text-zinc-700 dark:text-zinc-300">
           Des mots, des images et des idées partagés par la communauté.
         </p>
+        <Link href="/drops/new" className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-blue-700 px-4 font-semibold text-white hover:bg-blue-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700">
+          Déposer un drop
+        </Link>
       </header>
 
       <section
