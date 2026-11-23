@@ -2,7 +2,6 @@ import {
     Avatar,
     AvatarFallback,
     AvatarGroup,
-    AvatarGroupCount,
     AvatarImage,
 } from '@/components/ui/avatar';
 import type { Viewer } from '@/hooks/use-presence';
@@ -10,23 +9,22 @@ import type { Viewer } from '@/hooks/use-presence';
 export function ViewerStack({ users }: { users: Viewer[] }) {
     if (users.length === 0) return null;
 
-    const visibleUsers = users.slice(0, 4);
-    const remainingCount = users.length - visibleUsers.length;
-
     return (
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <AvatarGroup aria-hidden="true">
-                {visibleUsers.map((user) => (
-                    <Avatar key={user.id} title={user.displayName}>
+        <div className="flex w-fit max-w-full flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-stone-200 bg-stone-100 px-3 py-2 text-sm font-semibold text-foreground dark:border-zinc-700 dark:bg-zinc-900">
+            <AvatarGroup aria-hidden="true" className="flex-wrap gap-y-2 space-x-0 ps-2">
+                {users.map((user) => (
+                    <Avatar key={user.id} size="lg" title={user.displayName} className="-ms-2">
                         {user.avatarUrl && <AvatarImage src={user.avatarUrl} alt="" />}
-                        <AvatarFallback>
+                        <AvatarFallback
+                            className="font-semibold text-white"
+                            style={{ backgroundColor: `hsl(${(user.id * 137) % 360} 65% 32%)` }}
+                        >
                             {user.displayName.slice(0, 1).toLocaleUpperCase('fr-FR')}
                         </AvatarFallback>
                     </Avatar>
                 ))}
-                {remainingCount > 0 && <AvatarGroupCount>+{remainingCount}</AvatarGroupCount>}
             </AvatarGroup>
-            <p role="status">
+            <p role="status" className="max-w-48">
                 {users.length === 1
                     ? '1 personne regarde ce drop'
                     : `${users.length} personnes regardent ce drop`}
