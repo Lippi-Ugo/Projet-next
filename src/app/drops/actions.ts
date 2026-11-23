@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { notFound, redirect, RedirectType } from 'next/navigation'
-import { ApiError, apiPatch } from '@/lib/api/client'
+import { ApiError, apiDelete, apiPatch } from '@/lib/api/client'
 import type { Drop } from '@/lib/api/types'
 import { requireSession } from '@/lib/session'
 import { readDropForm } from './drop-form-data'
@@ -35,4 +35,15 @@ export async function updateDrop(drop: Drop, form: FormData) {
         revalidatePath(`${path}/edit`)
     }
     redirect(path, RedirectType.replace)
+}
+
+export async function deleteDrop(dropId: number) {
+    const token = await requireSession()
+    if (!Number.isSafeInteger(dropId) || dropId < 1) notFound()
+
+    const path = `/drops/${dropId}`
+    await apiDelete(path, token)
+    revalidatePath('/drops')
+    revalidatePath(path)
+    redirect('/drops')
 }
