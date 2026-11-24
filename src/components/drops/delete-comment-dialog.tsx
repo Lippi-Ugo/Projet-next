@@ -1,5 +1,6 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import { deleteComment } from "@/app/drops/actions";
 import {
@@ -18,8 +19,18 @@ import { Button } from "@/components/ui/button";
 export function DeleteCommentDialog({ commentId }: { commentId: number }) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger render={<Button variant="ghost" size="sm" className="text-destructive" />}>
-        Supprimer le commentaire
+      <AlertDialogTrigger
+        aria-label="Supprimer le commentaire"
+        title="Supprimer le commentaire"
+        render={
+          <Button
+            variant="ghost"
+            size="icon-lg"
+            className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/20"
+          />
+        }
+      >
+        <Trash2 aria-hidden="true" />
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
