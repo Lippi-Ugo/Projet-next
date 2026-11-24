@@ -1,7 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { logout } from "@/lib/action/auth";
+import { ApiError, apiGet } from "@/lib/api/client";
+import type { PrivateUser } from "@/lib/api/types";
 import { getSession } from "@/lib/session";
+import { ProfileAvatar } from "./profile-avatar";
 
 function LoginButton() {
   return (
@@ -19,12 +22,23 @@ async function SessionNavigation() {
 
   if (!token) return <LoginButton />;
 
+  let user: PrivateUser | null = null;
+  try {
+    user = await apiGet<PrivateUser>("/auth/me", token);
+  } catch (error) {
+    if (!(error instanceof ApiError || error instanceof TypeError)) throw error;
+  }
+
   return (
     <div className="flex items-center gap-2">
-      <span className="inline-flex min-h-9 items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3 text-xs font-bold text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100">
-        <span aria-hidden="true" className="size-2 rounded-full bg-emerald-700 dark:bg-emerald-400" />
-        Connecté
-      </span>
+      <Link
+        href="/profil"
+        aria-label="Mon profil"
+        title="Mon profil"
+        className="inline-flex size-10 shrink-0 items-center justify-center rounded-full hover:ring-2 hover:ring-blue-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-700"
+      >
+        <ProfileAvatar user={user} />
+      </Link>
       <form action={logout}>
         <button
           type="submit"
