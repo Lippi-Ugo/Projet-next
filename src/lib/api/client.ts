@@ -129,4 +129,5 @@ export async function apiDelete(path: string, token: string) {
     if (res.status === 401) await expireSession()
     if (res.status === 404) notFound()
     if (!res.ok) await throwApiError(res, path)
+    return res
 }

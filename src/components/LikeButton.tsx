@@ -1,16 +1,36 @@
 "use client";
 
-import { useActionState, useOptimistic } from "react";
+import { useActionState, useOptimistic, useState } from "react";
 import { toggleLike } from "@/app/drops/actions";
+import { useRealtimeEvent } from "@/hooks/use-realtime-event";
+
+type LikeCount = { likesCount: number };
 
 export function LikeButton({ dropId, liked, likesCount }: { dropId: number; liked: boolean; likesCount: number }) {
-    const [optimistic, toggle] = useOptimistic<{ liked: boolean; likesCount: number }, void>({ liked, likesCount }, (current) => ({
-        liked: !current.liked,
-        likesCount: current.likesCount + (current.liked ? -1 : 1),
-    }));
+    const [liveCount, setLiveCount] = useState<LikeCount | null>(null);
+
+    useRealtimeEvent("like:updated", (data) => {
+        if (data.dropId === dropId) setLiveCount(data);
+    });
+
+    const [optimistic, toggle] = useOptimistic(
+        { liked, likesCount: liveCount?.likesCount ?? likesCount, liveCount },
+        (current, click: { liked: boolean; previousCount: LikeCount | null }) => {
+            // Dès qu’un total arrive du serveur, il remplace le calcul optimiste.
+            const predictCount = current.liveCount === click.previousCount && current.liked !== click.liked;
+            return {
+                ...current,
+                liked: click.liked,
+                likesCount: predictCount
+                    ? Math.max(0, current.likesCount + (click.liked ? 1 : -1))
+                    : current.likesCount,
+            };
+        },
+    );
     const [, action, pending] = useActionState(async () => {
-        toggle();
-        await toggleLike(dropId, liked);
+        toggle({ liked: !liked, previousCount: liveCount });
+        const result = await toggleLike(dropId, liked);
+        setLiveCount((current) => current === liveCount ? result : current);
     }, undefined);
 
     return (

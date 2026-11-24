@@ -3,7 +3,7 @@
 import { refresh, revalidatePath } from 'next/cache'
 import { notFound, redirect, RedirectType } from 'next/navigation'
 import { ApiError, apiDelete, apiPatch, apiPost } from '@/lib/api/client'
-import type { Drop } from '@/lib/api/types'
+import type { Drop, LikeState } from '@/lib/api/types'
 import { requireSession } from '@/lib/session'
 import { readDropForm } from './drop-form-data'
 
@@ -12,9 +12,10 @@ export async function toggleLike(dropId: number, liked: boolean) {
     if (!Number.isSafeInteger(dropId) || dropId < 1) notFound()
 
     const path = `/drops/${dropId}/like`
-    if (liked) await apiDelete(path, token)
-    else await apiPost(path, undefined, token)
+    const response = liked ? await apiDelete(path, token) : await apiPost(path, undefined, token)
+    const result = (await response.json()) as LikeState
     refresh()
+    return result
 }
 
 export async function addComment(dropId: number, form: FormData) {
