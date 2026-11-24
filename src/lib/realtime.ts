@@ -1,4 +1,5 @@
 import type { Viewer } from '@/hooks/use-presence';
+import type { Comment } from '@/lib/api/types';
 
 type DropNotification = {
     kind: 'drop_opened' | 'drop_liked' | 'drop_commented';
@@ -12,6 +13,7 @@ export type RealtimeEvents = {
     'presence:drop': { dropId: number; viewers: Viewer[] };
     'presence:online': { users: Viewer[] };
     'like:updated': { dropId: number; likesCount: number };
+    'comment:created': { comment: Comment };
     notification: DropNotification;
 };
 
@@ -22,6 +24,7 @@ type ServerMessage =
     | { type: 'presence:drop'; data: RealtimeEvents['presence:drop'] }
     | { type: 'presence:online'; data: RealtimeEvents['presence:online'] }
     | { type: 'like:updated'; data: RealtimeEvents['like:updated'] }
+    | { type: 'comment:created'; data: RealtimeEvents['comment:created'] }
     | { type: 'notification'; data: DropNotification };
 
 const NO_RECONNECT = [4001, 4008, 4009];
@@ -31,6 +34,7 @@ const listeners: { [Type in EventName]: Set<Listener<Type>> } = {
     'presence:drop': new Set(),
     'presence:online': new Set(),
     'like:updated': new Set(),
+    'comment:created': new Set(),
     notification: new Set(),
 };
 const latest: Partial<RealtimeEvents> = {};
@@ -85,6 +89,8 @@ function open(url: string) {
             listeners['presence:drop'].forEach((listener) => listener(message.data));
         } else if (message.type === 'like:updated') {
             listeners['like:updated'].forEach((listener) => listener(message.data));
+        } else if (message.type === 'comment:created') {
+            listeners['comment:created'].forEach((listener) => listener(message.data));
         } else if (message.type === 'notification') {
             listeners.notification.forEach((listener) => listener(message.data));
         }

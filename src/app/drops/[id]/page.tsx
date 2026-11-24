@@ -8,6 +8,7 @@ import { requireSession } from "@/lib/session";
 import { LikeButton } from "@/components/LikeButton";
 import { PresenceWidget } from "@/components/PresenceWidget";
 import { DropAuthorAvatar } from "@/components/drops/drop-author-avatar";
+import { LiveComments } from "@/components/drops/live-comments";
 import { Badge } from "@/components/ui/badge";
 import { CommentFields } from "./comment-form";
 import { DeleteDropDialog } from "@/components/drops/delete-drop-dialog";
@@ -187,6 +188,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
         aria-labelledby="comments-heading"
         className="mt-8 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-8 dark:border-zinc-800 dark:bg-zinc-900"
       >
+        <LiveComments dropId={drop.id} />
         <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-zinc-200 pb-4 dark:border-zinc-800">
           <h2 id="comments-heading" className="text-xl font-bold text-zinc-950 dark:text-white">
             Commentaires
