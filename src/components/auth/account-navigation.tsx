@@ -34,7 +34,7 @@ async function SessionNavigation() {
   return (
     <div className="relative flex max-w-full flex-wrap items-center justify-end gap-2">
       <OnlineUsers />
-      <DropNotifications />
+      <DropNotifications key={user?.id} userId={user?.id} />
       <Link
         href="/profil"
         aria-label="Mon profil"

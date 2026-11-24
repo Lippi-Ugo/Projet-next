@@ -9,7 +9,7 @@ export function OnlineUsers() {
   if (!users) return null;
 
   return (
-    <details>
+    <details name="account-popovers">
       <summary className="flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-full border border-border px-3 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 [&::-webkit-details-marker]:hidden">
         <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-emerald-600 dark:bg-emerald-400" />
         <span aria-live="polite">{users.length} en ligne</span>
