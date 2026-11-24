@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { DropNotifications } from "@/components/drops/drop-notifications";
 import { logout } from "@/lib/action/auth";
 import { ApiError, apiGet } from "@/lib/api/client";
 import type { PrivateUser } from "@/lib/api/types";
@@ -33,6 +34,7 @@ async function SessionNavigation() {
   return (
     <div className="relative flex max-w-full flex-wrap items-center justify-end gap-2">
       <OnlineUsers />
+      <DropNotifications />
       <Link
         href="/profil"
         aria-label="Mon profil"
