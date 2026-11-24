@@ -11,3 +11,6 @@ export type Health = S["Health"]
 export type AuthResponse = S["AuthResponse"]
 export type ApiErrorResponse = S["ErrorResponse"]
 export type RegisterRequest = paths["/auth/register"]["post"]["requestBody"]["content"]["application/json"]
+export type PrivateUser = S["PrivateUser"]
+export type ProfileUpdate = paths["/auth/me"]["patch"]["requestBody"]["content"]["application/json"]
+export type ProfileValues = Required<ProfileUpdate>
