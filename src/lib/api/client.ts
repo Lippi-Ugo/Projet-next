@@ -121,13 +121,16 @@ export async function apiPatch(path: string, body: unknown, token: string) {
     return res
 }
 
-export async function apiDelete(path: string, token: string) {
+export async function apiDelete(path: string, token: string, { allowMissing = false } = {}) {
     const res = await fetch(`${process.env.API_URL}${path}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
     })
     if (res.status === 401) await expireSession()
-    if (res.status === 404) notFound()
+    if (res.status === 404) {
+        if (allowMissing) return res
+        notFound()
+    }
     if (!res.ok) await throwApiError(res, path)
     return res
 }

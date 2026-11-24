@@ -10,5 +10,9 @@ export function LiveComments({ dropId }: { dropId: number }) {
     if (comment.dropId === dropId) router.refresh();
   });
 
+  useRealtimeEvent("comment:deleted", (data) => {
+    if (data.dropId === dropId) router.refresh();
+  });
+
   return null;
 }

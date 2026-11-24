@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { apiGet } from "@/lib/api/client";
 import type { Category, CommentPage, Drop } from "@/lib/api/types";
 import { requireSession } from "@/lib/session";
 import { LikeButton } from "@/components/LikeButton";
 import { PresenceWidget } from "@/components/PresenceWidget";
+import { DeleteCommentDialog } from "@/components/drops/delete-comment-dialog";
 import { DropAuthorAvatar } from "@/components/drops/drop-author-avatar";
 import { LiveComments } from "@/components/drops/live-comments";
 import { Badge } from "@/components/ui/badge";
@@ -68,6 +69,10 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
     ),
   ]);
   const categoryLabel = categories.find(({ id }) => id === drop.category)?.label ?? drop.category;
+  const lastCommentsPage = Math.max(1, comments.totalPages);
+  if (commentsPage > lastCommentsPage) {
+    redirect(lastCommentsPage === 1 ? `/drops/${id}` : `/drops/${id}?commentsPage=${lastCommentsPage}`);
+  }
 
   return (
     <>
@@ -223,12 +228,15 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
                         </span>
                       )}
                     </p>
-                    <time
-                      dateTime={comment.createdAt}
-                      className="text-xs text-zinc-600 dark:text-zinc-400"
-                    >
-                      {dateFormatter.format(new Date(comment.createdAt))}
-                    </time>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <time
+                        dateTime={comment.createdAt}
+                        className="text-xs text-zinc-600 dark:text-zinc-400"
+                      >
+                        {dateFormatter.format(new Date(comment.createdAt))}
+                      </time>
+                      {comment.isMine && <DeleteCommentDialog commentId={comment.id} />}
+                    </div>
                   </header>
                   <p className="mt-3 whitespace-pre-wrap wrap-anywhere text-sm leading-6 text-zinc-800 dark:text-zinc-200">
                     {comment.content}
