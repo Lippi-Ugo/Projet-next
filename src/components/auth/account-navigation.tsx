@@ -4,6 +4,7 @@ import { logout } from "@/lib/action/auth";
 import { ApiError, apiGet } from "@/lib/api/client";
 import type { PrivateUser } from "@/lib/api/types";
 import { getSession } from "@/lib/session";
+import { OnlineUsers } from "./online-users";
 import { ProfileAvatar } from "./profile-avatar";
 
 function LoginButton() {
@@ -30,7 +31,8 @@ async function SessionNavigation() {
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="relative flex max-w-full flex-wrap items-center justify-end gap-2">
+      <OnlineUsers />
       <Link
         href="/profil"
         aria-label="Mon profil"

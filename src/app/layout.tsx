@@ -46,7 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             >
               Drops<span className="text-blue-700">.</span>
             </Link>
-            <div className="flex items-center gap-1 sm:gap-2">
+            <div className="flex min-w-0 flex-wrap items-center justify-end gap-1 sm:gap-2">
               {/* A full request checks the current session after login. */}
               {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a

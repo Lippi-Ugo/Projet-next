@@ -1,12 +1,25 @@
 import type { Viewer } from '@/hooks/use-presence';
 
-type PresenceDrop = { dropId: number; viewers: Viewer[] };
-type Listener = (data: PresenceDrop) => void;
+type RealtimeEvents = {
+    'presence:drop': { dropId: number; viewers: Viewer[] };
+    'presence:online': { users: Viewer[] };
+};
+
+type EventName = keyof RealtimeEvents;
+type Listener<Type extends EventName> = (data: RealtimeEvents[Type]) => void;
+type ServerMessage =
+    | { type: 'hello'; data: { online: Viewer[] } }
+    | { type: 'presence:drop'; data: RealtimeEvents['presence:drop'] }
+    | { type: 'presence:online'; data: RealtimeEvents['presence:online'] };
 
 const NO_RECONNECT = [4001, 4008, 4009];
 const CLOSE_DELAY_MS = 1000;
 
-const listeners = new Map<string, Set<Listener>>();
+const listeners: { [Type in EventName]: Set<Listener<Type>> } = {
+    'presence:drop': new Set(),
+    'presence:online': new Set(),
+};
+const latest: Partial<RealtimeEvents> = {};
 const openListeners = new Set<() => void>();
 
 let socket: WebSocket | null = null;
@@ -49,11 +62,20 @@ function open(url: string) {
         openListeners.forEach((listener) => listener());
     };
     ws.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        listeners.get(message.type)?.forEach((listener) => listener(message.data));
+        const message: ServerMessage = JSON.parse(event.data);
+        if (message.type === 'hello') {
+            publishOnline(message.data.online);
+        } else if (message.type === 'presence:online') {
+            publishOnline(message.data.users);
+        } else if (message.type === 'presence:drop') {
+            listeners['presence:drop'].forEach((listener) => listener(message.data));
+        }
     };
     ws.onclose = (event) => {
-        if (socket === ws) socket = null;
+        if (socket === ws) {
+            socket = null;
+            delete latest['presence:online'];
+        }
         if (consumers === 0 || NO_RECONNECT.includes(event.code)) return;
         scheduleReconnect();
     };
@@ -64,6 +86,7 @@ function disconnect() {
     reconnectTimer = undefined;
     socket?.close(1000);
     socket = null;
+    delete latest['presence:online'];
 }
 
 export function retain() {
@@ -76,11 +99,18 @@ export function retain() {
     };
 }
 
-export function subscribe(type: string, listener: Listener) {
-    if (!listeners.has(type)) listeners.set(type, new Set());
-    listeners.get(type)!.add(listener);
+function publishOnline(users: Viewer[]) {
+    const data = { users };
+    latest['presence:online'] = data;
+    listeners['presence:online'].forEach((listener) => listener(data));
+}
+
+export function subscribe<Type extends EventName>(type: Type, listener: Listener<Type>) {
+    listeners[type].add(listener);
+    const previous = latest[type];
+    if (previous) listener(previous);
     return () => {
-        listeners.get(type)?.delete(listener);
+        listeners[type].delete(listener);
     };
 }
 
