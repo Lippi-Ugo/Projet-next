@@ -1,13 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { apiGet } from "@/lib/api/client";
 import type { Category, CommentPage, Drop } from "@/lib/api/types";
 import { requireSession } from "@/lib/session";
 import { LikeButton } from "@/components/LikeButton";
 import { PresenceWidget } from "@/components/PresenceWidget";
+import { DeleteCommentDialog } from "@/components/drops/delete-comment-dialog";
 import { DropAuthorAvatar } from "@/components/drops/drop-author-avatar";
+import { LiveComments } from "@/components/drops/live-comments";
 import { Badge } from "@/components/ui/badge";
 import { CommentFields } from "./comment-form";
 import { DeleteDropDialog } from "@/components/drops/delete-drop-dialog";
@@ -67,6 +69,10 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
     ),
   ]);
   const categoryLabel = categories.find(({ id }) => id === drop.category)?.label ?? drop.category;
+  const lastCommentsPage = Math.max(1, comments.totalPages);
+  if (commentsPage > lastCommentsPage) {
+    redirect(lastCommentsPage === 1 ? `/drops/${id}` : `/drops/${id}?commentsPage=${lastCommentsPage}`);
+  }
 
   return (
     <>
@@ -187,6 +193,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
         aria-labelledby="comments-heading"
         className="mt-8 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-8 dark:border-zinc-800 dark:bg-zinc-900"
       >
+        <LiveComments dropId={drop.id} />
         <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-zinc-200 pb-4 dark:border-zinc-800">
           <h2 id="comments-heading" className="text-xl font-bold text-zinc-950 dark:text-white">
             Commentaires
@@ -209,26 +216,29 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
             {comments.items.map((comment) => (
               <li key={comment.id} className="py-5 first:pt-5">
                 <article>
-                  <header className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-zinc-950 dark:text-zinc-100">
-                      {comment.author.displayName}
-                      <span className="ml-2 font-normal text-zinc-600 dark:text-zinc-400">
-                        @{comment.author.username}
-                      </span>
-                      {comment.isMine && (
-                        <span className="ml-2 rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-                          Vous
+                  <header className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 wrap-anywhere text-sm font-semibold text-zinc-950 dark:text-zinc-100">
+                        <span>{comment.author.displayName}</span>
+                        <span className="font-normal text-zinc-600 dark:text-zinc-400">
+                          @{comment.author.username}
                         </span>
-                      )}
-                    </p>
-                    <time
-                      dateTime={comment.createdAt}
-                      className="text-xs text-zinc-600 dark:text-zinc-400"
-                    >
-                      {dateFormatter.format(new Date(comment.createdAt))}
-                    </time>
+                        {comment.isMine && (
+                          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                            Vous
+                          </span>
+                        )}
+                      </p>
+                      <time
+                        dateTime={comment.createdAt}
+                        className="mt-1 block text-xs text-zinc-600 dark:text-zinc-400"
+                      >
+                        {dateFormatter.format(new Date(comment.createdAt))}
+                      </time>
+                    </div>
+                    {comment.isMine && <DeleteCommentDialog commentId={comment.id} />}
                   </header>
-                  <p className="mt-3 whitespace-pre-wrap wrap-anywhere text-sm leading-6 text-zinc-800 dark:text-zinc-200">
+                  <p className="mt-2 whitespace-pre-wrap wrap-anywhere text-sm leading-6 text-zinc-800 dark:text-zinc-200">
                     {comment.content}
                   </p>
                 </article>

@@ -29,6 +29,14 @@ export async function addComment(dropId: number, form: FormData) {
     refresh()
 }
 
+export async function deleteComment(commentId: number) {
+    const token = await requireSession()
+    if (!Number.isSafeInteger(commentId) || commentId < 1) notFound()
+
+    await apiDelete(`/comments/${commentId}`, token, { allowMissing: true })
+    refresh()
+}
+
 export async function updateDrop(drop: Drop, form: FormData) {
     const token = await requireSession()
     if (!Number.isSafeInteger(drop.id) || drop.id < 1) notFound()
