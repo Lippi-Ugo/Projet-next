@@ -51,7 +51,7 @@ export function DropNotifications({ userId }: { userId?: number }) {
   return (
     <>
       {userId !== undefined && (
-        <details ref={menu} name="account-popovers">
+        <details ref={menu} name="account-popovers" className="sm:relative">
           <summary
             aria-label={unread ? `Notifications (${unread} à lire)` : "Notifications"}
             className="relative flex size-10 cursor-pointer list-none items-center justify-center rounded-full border border-border hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 [&::-webkit-details-marker]:hidden"
@@ -63,7 +63,7 @@ export function DropNotifications({ userId }: { userId?: number }) {
               </span>
             )}
           </summary>
-          <div className="absolute right-0 top-full z-20 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-popover text-popover-foreground shadow-md">
+          <div className="absolute right-0 top-full z-20 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-popover text-popover-foreground shadow-md sm:right-auto sm:left-1/2 sm:-translate-x-1/2">
             <div className="flex flex-wrap items-center justify-between gap-2 p-3">
               <h2 className="text-sm font-semibold">Notifications</h2>
               {unread > 0 && (

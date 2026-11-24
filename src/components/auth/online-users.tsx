@@ -9,12 +9,12 @@ export function OnlineUsers() {
   if (!users) return null;
 
   return (
-    <details name="account-popovers">
+    <details name="account-popovers" className="sm:relative">
       <summary className="flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-full border border-border px-3 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 [&::-webkit-details-marker]:hidden">
         <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-emerald-600 dark:bg-emerald-400" />
         <span aria-live="polite">{users.length} en ligne</span>
       </summary>
-      <div className="absolute right-0 top-full z-20 mt-2 w-60 max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-md">
+      <div className="absolute right-0 top-full z-20 mt-2 w-60 max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-md sm:right-auto sm:left-1/2 sm:-translate-x-1/2">
         <p className="mb-2 text-sm font-semibold">Utilisateurs en ligne</p>
         {users.length === 0 ? (
           <p className="text-sm text-muted-foreground">Personne en ligne.</p>
