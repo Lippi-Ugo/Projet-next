@@ -1,7 +1,7 @@
 import Link from "next/link";
+import { DropsExplorer } from "@/components/drops/DropsExplorer";
 import { apiGet } from "@/lib/api/client";
 import type { Category, DropPage } from "@/lib/api/types";
-import { DropCard } from "./drop-card";
 
 export async function DropList({
   q = "",
@@ -63,11 +63,7 @@ export async function DropList({
           </p>
         </div>
       ) : (
-        <ul className="mt-5 space-y-4">
-          {data.items.map((drop) => (
-            <DropCard key={drop.id} drop={drop} categoryLabel={categoryLabels.get(drop.category) ?? drop.category} />
-          ))}
-        </ul>
+        <DropsExplorer drops={data.items} categories={categories} />
       )}
 
       {data.totalPages > 1 && (

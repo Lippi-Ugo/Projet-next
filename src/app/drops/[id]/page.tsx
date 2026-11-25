@@ -9,7 +9,9 @@ import { LikeButton } from "@/components/LikeButton";
 import { PresenceWidget } from "@/components/PresenceWidget";
 import { DeleteCommentDialog } from "@/components/drops/delete-comment-dialog";
 import { UserProfileLink } from "@/components/users/user-profile-link";
+import { DropLocation } from "@/components/drops/drop-location";
 import { LiveComments } from "@/components/drops/live-comments";
+import { DropLocationMap } from "@/components/map/DropLocationMap";
 import { Badge } from "@/components/ui/badge";
 import { CommentFields } from "./comment-form";
 import { DeleteDropDialog } from "@/components/drops/delete-drop-dialog";
@@ -157,6 +159,9 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
                 {drop.commentsCount} commentaire
                 {drop.commentsCount === 1 ? "" : "s"}
               </span>
+              <a href="#localisation" className="rounded-lg bg-zinc-100 px-3 py-2 underline underline-offset-4 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700">
+                Localisation
+              </a>
             </div>
             <LikeButton
               dropId={drop.id}
@@ -173,6 +178,11 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
           </div>
         )}
       </article>
+
+      <figure id="localisation" className="mt-8 scroll-mt-4">
+        <DropLocationMap location={drop.location} category={drop.category} />
+        <DropLocation location={drop.location} />
+      </figure>
 
       <section
         aria-labelledby="comments-heading"
