@@ -205,9 +205,11 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
                     <div className="min-w-0">
                       <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 wrap-anywhere text-sm font-semibold text-zinc-950 dark:text-zinc-100">
                         <span>{comment.author.displayName}</span>
-                        <span className="font-normal text-zinc-600 dark:text-zinc-400">
-                          @{comment.author.username}
-                        </span>
+                        {!comment.deleted && (
+                          <span className="font-normal text-zinc-600 dark:text-zinc-400">
+                            @{comment.author.username}
+                          </span>
+                        )}
                         {comment.isMine && (
                           <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
                             Vous
@@ -223,9 +225,11 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
                     </div>
                     {comment.isMine && <DeleteCommentDialog commentId={comment.id} />}
                   </header>
-                  <p className="mt-2 whitespace-pre-wrap wrap-anywhere text-sm leading-6 text-zinc-800 dark:text-zinc-200">
-                    {comment.content}
-                  </p>
+                  {!comment.deleted && (
+                    <p className="mt-2 whitespace-pre-wrap wrap-anywhere text-sm leading-6 text-zinc-800 dark:text-zinc-200">
+                      {comment.content}
+                    </p>
+                  )}
                 </article>
               </li>
             ))}
