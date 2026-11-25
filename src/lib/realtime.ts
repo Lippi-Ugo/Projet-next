@@ -2,7 +2,7 @@ import type { Viewer } from '@/hooks/use-presence';
 import type { Comment } from '@/lib/api/types';
 
 type DropNotification = {
-    kind: 'drop_opened' | 'drop_liked' | 'drop_commented';
+    kind: 'drop_liked' | 'drop_commented';
     dropId: number;
     dropTitle: string;
     by: Viewer;
@@ -12,8 +12,9 @@ type DropNotification = {
 export type RealtimeEvents = {
     'presence:drop': { dropId: number; viewers: Viewer[] };
     'presence:online': { users: Viewer[] };
-    'like:updated': { dropId: number; likesCount: number };
+    'like:updated': { dropId: number; likesCount: number; dislikesCount: number };
     'comment:created': { comment: Comment };
+    'comment:updated': { comment: Comment };
     'comment:deleted': { dropId: number; commentId: number };
     notification: DropNotification;
 };
@@ -26,6 +27,7 @@ type ServerMessage =
     | { type: 'presence:online'; data: RealtimeEvents['presence:online'] }
     | { type: 'like:updated'; data: RealtimeEvents['like:updated'] }
     | { type: 'comment:created'; data: RealtimeEvents['comment:created'] }
+    | { type: 'comment:updated'; data: RealtimeEvents['comment:updated'] }
     | { type: 'comment:deleted'; data: RealtimeEvents['comment:deleted'] }
     | { type: 'notification'; data: DropNotification };
 
@@ -37,6 +39,7 @@ const listeners: { [Type in EventName]: Set<Listener<Type>> } = {
     'presence:online': new Set(),
     'like:updated': new Set(),
     'comment:created': new Set(),
+    'comment:updated': new Set(),
     'comment:deleted': new Set(),
     notification: new Set(),
 };
@@ -94,6 +97,8 @@ function open(url: string) {
             listeners['like:updated'].forEach((listener) => listener(message.data));
         } else if (message.type === 'comment:created') {
             listeners['comment:created'].forEach((listener) => listener(message.data));
+        } else if (message.type === 'comment:updated') {
+            listeners['comment:updated'].forEach((listener) => listener(message.data));
         } else if (message.type === 'comment:deleted') {
             listeners['comment:deleted'].forEach((listener) => listener(message.data));
         } else if (message.type === 'notification') {
