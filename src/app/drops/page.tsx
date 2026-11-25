@@ -24,7 +24,7 @@ export const metadata = {
 
 export default function DropsPage({ searchParams }: { searchParams: Promise<Search> }) {
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
+    <main className="mx-auto w-full max-w-[96rem] flex-1 px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
       <Suspense
         fallback={
           <p

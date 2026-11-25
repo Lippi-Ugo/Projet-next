@@ -12,10 +12,24 @@ const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   timeZone: "Europe/Paris",
 });
 
-export function DropCard({ drop, categoryLabel }: { drop: Drop; categoryLabel: string }) {
+export function DropCard({
+  drop,
+  categoryLabel,
+  active,
+  onActivate,
+}: {
+  drop: Drop;
+  categoryLabel: string;
+  active: boolean;
+  onActivate: () => void;
+}) {
   return (
     <li
-      className="overflow-hidden rounded-2xl border border-zinc-200 border-t-4 border-t-blue-800 bg-white shadow-sm transition-shadow duration-200 hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:border-t-blue-500 dark:bg-zinc-900 dark:hover:border-zinc-700"
+      id={`drop-${drop.id}`}
+      data-active={active || undefined}
+      onMouseMove={onActivate}
+      onFocus={onActivate}
+      className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-colors hover:border-blue-500 data-[active]:border-blue-500 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-blue-400 dark:data-[active]:border-blue-400"
     >
       <article className="p-5 sm:p-7">
         <header>

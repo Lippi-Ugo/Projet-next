@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import type { Category, Drop } from "@/lib/api/types";
 import {
@@ -13,6 +16,7 @@ import { LocationField } from "./location-field";
 const inputClass = "w-full rounded-lg border border-zinc-400 bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-blue-700 dark:border-zinc-600 dark:bg-zinc-950";
 
 export function DropFields({ categories, drop }: { categories: Category[]; drop?: Drop }) {
+  const [category, setCategory] = useState<Drop["category"] | null>(drop?.category ?? null);
   const categoryLabels = categories.map(({ id, label }) => ({
     value: id,
     label,
@@ -36,7 +40,7 @@ export function DropFields({ categories, drop }: { categories: Category[]; drop?
             <option key={id} value={id}>{label}</option>
           ))}
         </select> */}
-        <Select name="category" required defaultValue={drop?.category ?? null} items={categoryLabels}>
+        <Select name="category" required value={category} onValueChange={setCategory} items={categoryLabels}>
           <SelectTrigger id="drop-category" className={inputClass + " dark:hover:bg-zinc-900 data-[size=default]:h-10"}>
             <SelectValue placeholder={categories.length ? "Choisir une catégorie" : "Aucune catégorie disponible"} />
           </SelectTrigger>
@@ -59,6 +63,7 @@ export function DropFields({ categories, drop }: { categories: Category[]; drop?
       <fieldset>
         <legend className="font-medium">Position du drop</legend>
         <LocationField
+          category={category ?? "note"}
           initialLat={drop?.location.lat}
           initialLng={drop?.location.lng}
           showTestPosition={!drop}
