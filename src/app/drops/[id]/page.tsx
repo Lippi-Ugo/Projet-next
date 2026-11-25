@@ -8,7 +8,7 @@ import { requireSession } from "@/lib/session";
 import { LikeButton } from "@/components/LikeButton";
 import { PresenceWidget } from "@/components/PresenceWidget";
 import { DeleteCommentDialog } from "@/components/drops/delete-comment-dialog";
-import { DropAuthorAvatar } from "@/components/drops/drop-author-avatar";
+import { UserProfileLink } from "@/components/users/user-profile-link";
 import { LiveComments } from "@/components/drops/live-comments";
 import { Badge } from "@/components/ui/badge";
 import { CommentFields } from "./comment-form";
@@ -124,15 +124,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
         <div className="p-5 sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-3">
-              <DropAuthorAvatar author={drop.author} />
-              <p className="min-w-0 text-sm">
-                <span className="block truncate font-semibold text-zinc-950 dark:text-zinc-100">
-                  {drop.author.displayName}
-                </span>
-                <span className="block truncate text-zinc-600 dark:text-zinc-400">
-                  @{drop.author.username}
-                </span>
-              </p>
+              <UserProfileLink user={drop.author} />
             </div>
             <PresenceWidget dropId={drop.id} />
           </div>

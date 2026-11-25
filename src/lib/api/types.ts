@@ -15,3 +15,12 @@ export type RegisterRequest = paths["/auth/register"]["post"]["requestBody"]["co
 export type PrivateUser = S["PrivateUser"]
 export type ProfileUpdate = paths["/auth/me"]["patch"]["requestBody"]["content"]["application/json"]
 export type ProfileValues = Required<ProfileUpdate>
+export type Profile = Drop["author"] & {
+    bio: string | null
+    createdAt: string
+    stats: {
+        dropsCount: number;
+        likesReceived: number;
+        commentsCount: number;
+    };
+};
