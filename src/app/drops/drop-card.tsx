@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Drop } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
 import { LikeButton } from "@/components/LikeButton";
-import { DropAuthorAvatar } from "@/components/drops/drop-author-avatar";
+import { UserProfileLink } from "@/components/users/user-profile-link";
 import { DropExcerpt } from "./drop-excerpt";
 
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
@@ -62,15 +62,7 @@ export function DropCard({ drop, categoryLabel }: { drop: Drop; categoryLabel: s
 
         <footer className="mt-6 flex flex-col gap-4 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800">
           <div className="flex min-w-0 items-center gap-3">
-            <DropAuthorAvatar author={drop.author} />
-            <p className="min-w-0 truncate text-sm">
-              <span className="block truncate font-semibold text-zinc-900 dark:text-zinc-100">
-                {drop.author.displayName}
-              </span>
-              <span className="block truncate text-xs text-zinc-600 dark:text-zinc-300">
-                @{drop.author.username}
-              </span>
-            </p>
+            <UserProfileLink user={drop.author} />
           </div>
           <div className="flex flex-wrap items-center gap-1 self-start rounded-xl border border-zinc-200 bg-zinc-50 p-1 text-xs font-medium text-zinc-800 sm:self-auto dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200">
             <LikeButton

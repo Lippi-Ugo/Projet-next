@@ -5,4 +5,4 @@ export function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL('/login', req.url))
 }
 
-export const config = { matcher: ['/drops/:path*'],}
+export const config = { matcher: ['/drops/:path*', "/users/:path*"],}
