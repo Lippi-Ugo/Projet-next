@@ -1,16 +1,36 @@
-"use client"
-import { useState } from "react";
+"use client";
+
+import { useCallback, useState } from "react";
+import { DropLocationMap } from "@/components/map/DropLocationMap";
+import type { Drop } from "@/lib/api/types";
 import { useGeolocalisation } from "@/lib/use-geolocalisation";
 
 const inputClass = "w-full rounded-lg border border-zinc-400 bg-white px-3 py-2 focus-visible:outline-2 focus-visible:outline-blue-700 dark:border-zinc-600 dark:bg-zinc-950";
 
-export function LocationField({ initialLat, initialLng, showTestPosition }: { initialLat?: number; initialLng?: number; showTestPosition: boolean }) {
+export function LocationField({ category, initialLat, initialLng, showTestPosition }: {
+    category: Drop["category"];
+    initialLat?: number;
+    initialLng?: number;
+    showTestPosition: boolean;
+}) {
     const { status, locate } = useGeolocalisation();
     const [lat, setLat] = useState(String(initialLat ?? ""));
     const [lng, setLng] = useState(String(initialLng ?? ""));
+    const latitude = Number(lat);
+    const longitude = Number(lng);
+    const location = lat && lng && Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180
+        ? { lat: latitude, lng: longitude }
+        : undefined;
+
+    const setLocation = useCallback(({ lat, lng }: Drop["location"]) => {
+        setLat(String(lat));
+        setLng(String(lng));
+    }, []);
 
     return (
         <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">Faites glisser l’épingle pour choisir la position.</p>
+            <DropLocationMap category={category} location={location} onChange={setLocation} />
             <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                     <label htmlFor="drop-lat">Latitude</label>
@@ -25,18 +45,15 @@ export function LocationField({ initialLat, initialLng, showTestPosition }: { in
             </div>
             <div className="flex flex-wrap gap-x-4">
                 <button type="button" onClick={() => locate(({ lat, lng }) => {
-                    setLat(lat.toFixed(6));
-                    setLng(lng.toFixed(6));
+                    setLocation({ lat: Number(lat.toFixed(6)), lng: Number(lng.toFixed(6)) });
                 })}
                     disabled={status === "loading"}
                     className="min-h-10 text-sm font-medium text-blue-700 underline disabled:opacity-60 dark:text-blue-300">
                     {status === "loading" ? "Localisation…" : "Utiliser ma position"}
                 </button>
                 {showTestPosition && (
-                    <button type="button" disabled={status === "loading"} onClick={() => {
-                        setLat("47.495472");
-                        setLng("6.805279");
-                    }} className="min-h-10 text-sm font-medium text-blue-700 underline disabled:opacity-60 dark:text-blue-300">
+                    <button type="button" disabled={status === "loading"} onClick={() => setLocation({ lat: 47.495472, lng: 6.805279 })}
+                        className="min-h-10 text-sm font-medium text-blue-700 underline disabled:opacity-60 dark:text-blue-300">
                         Utiliser les coordonnées de test du département
                     </button>
                 )}
