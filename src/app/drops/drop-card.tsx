@@ -40,13 +40,7 @@ export function DropCard({ drop, categoryLabel }: { drop: Drop; categoryLabel: s
           </h3>
         </header>
 
-        {drop.locked ? (
-          <p className="mt-4 rounded-xl border border-zinc-200 bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-            Ce drop est verrouillé.
-          </p>
-        ) : (
-          <DropExcerpt content={drop.content} />
-        )}
+        <DropExcerpt content={drop.content} />
 
         {drop.imageUrl && (
           <Image

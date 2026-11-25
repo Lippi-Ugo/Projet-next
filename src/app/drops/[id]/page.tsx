@@ -129,11 +129,7 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
             <PresenceWidget dropId={drop.id} />
           </div>
 
-          {drop.locked ? (
-            <p className="mt-6 rounded-xl border border-zinc-200 bg-zinc-100 px-4 py-3 text-sm font-medium text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-              Le contenu de ce drop est verrouillé.
-            </p>
-          ) : drop.content ? (
+          {drop.content ? (
             <p className="mt-6 whitespace-pre-wrap wrap-anywhere text-base leading-7 text-zinc-800 dark:text-zinc-200">
               {drop.content}
             </p>
@@ -160,9 +156,6 @@ async function DropContent({ params, searchParams }: { params: Promise<{ id: str
               <span className="rounded-lg bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
                 {drop.commentsCount} commentaire
                 {drop.commentsCount === 1 ? "" : "s"}
-              </span>
-              <span className="rounded-lg bg-zinc-100 px-3 py-2 dark:bg-zinc-800">
-                Position {drop.location.precision === "exact" ? "exacte" : "approximative"}
               </span>
             </div>
             <LikeButton

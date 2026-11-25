@@ -2,7 +2,7 @@ import type { Viewer } from '@/hooks/use-presence';
 import type { Comment } from '@/lib/api/types';
 
 type DropNotification = {
-    kind: 'drop_opened' | 'drop_liked' | 'drop_commented';
+    kind: 'drop_liked' | 'drop_commented';
     dropId: number;
     dropTitle: string;
     by: Viewer;
@@ -12,7 +12,7 @@ type DropNotification = {
 export type RealtimeEvents = {
     'presence:drop': { dropId: number; viewers: Viewer[] };
     'presence:online': { users: Viewer[] };
-    'like:updated': { dropId: number; likesCount: number };
+    'like:updated': { dropId: number; likesCount: number; dislikesCount: number };
     'comment:created': { comment: Comment };
     'comment:deleted': { dropId: number; commentId: number };
     notification: DropNotification;

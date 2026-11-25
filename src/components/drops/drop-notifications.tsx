@@ -11,7 +11,6 @@ import { useRealtimeEvent } from "@/hooks/use-realtime-event";
 import type { RealtimeEvents } from "@/lib/realtime";
 
 const messages = {
-  drop_opened: "a ouvert ton drop",
   drop_liked: "a aimé ton drop",
   drop_commented: "a commenté ton drop",
 } satisfies Record<RealtimeEvents["notification"]["kind"], string>;
